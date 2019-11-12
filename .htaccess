@@ -1,0 +1,6 @@
+#URL mapping for REST API Demo
+#Note: "NC" means case insensitive
+RewriteEngine on
+
+RewriteRule ^BowlingTournament/teams$ api/bowlingTeamService.php [NC]
+#RewriteRule ^BowlingTournament/teams/([0-9]+)$ api/**SOMETHING**.php?teamID=$1 [NC]
