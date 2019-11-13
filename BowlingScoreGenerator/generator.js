@@ -147,20 +147,16 @@ function scoreChecker(firstThrow, secondThrow) {
     if (firstThrow === "X" && secondThrow === "X") {
         return 20;
     }
-
     if (firstThrow === "X" && secondThrow !== undefined) {
         return 10 + parseInt(secondThrow);
     }
-
     if (firstThrow === "X" || secondThrow === "/") {
         return 10;
     }
-
     //if second throw doesn't exist
     if (secondThrow === undefined) {
         return parseInt(firstThrow)
     }
-
     return parseInt(firstThrow) + parseInt(secondThrow);
 }
 
@@ -169,17 +165,12 @@ function lookAheadTwoBalls(framesArr, index) {
 
     let nextBall = framesArr[index + 1].split(" ")[0];
     let finalBall = framesArr[index + 1].split(" ")[1];
-
-    if (nextBall === "X" && index < 9) {
+    if (nextBall === "X" && index < 10) {
         finalBall = framesArr[index + 2].split(" ")[0];
     }
-
     if (finalBall === "/") {
         return 10;
     }
-
-
-
     return scoreChecker(nextBall, finalBall);
 }
 
@@ -187,23 +178,19 @@ function lookAheadTwoBalls(framesArr, index) {
 function lookAheadOneBall(framesArr, index) {
     let nextBall = framesArr[index + 1].split(" ")[0];
     return scoreChecker(nextBall);
-
 }
 
 function parseFrames(frames) {
 
     let scoreArr = [];
-
     //loop
     for (let i = 0; i < frames.length; i++) {
         //store frame score
         let frameScore = 0;
         //get current ball
         const currentFrame = frames[i];
-
         const firstThrowFirstFrame = currentFrame.split(" ")[0];
         const secondThrowFirstFrame = currentFrame.split(" ")[1];
-
 
         if (firstThrowFirstFrame === "X" && i < 10) {
             //get score for the next two frames
@@ -213,13 +200,10 @@ function parseFrames(frames) {
         } else {
             frameScore += scoreChecker(firstThrowFirstFrame, secondThrowFirstFrame);
         }
-
-
         scoreArr[i] = frameScore;
-
-
     }
-    console.log(scoreArr);
+    console.log(scoreArr.slice(0, 9));
+    return scoreArr.slice(0, 10);
 }
 
 
