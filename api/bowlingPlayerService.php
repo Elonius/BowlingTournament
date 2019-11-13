@@ -1,8 +1,8 @@
 <?php
 
 $projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/shawnmcc/BowlingTournament';
-require_once ($projectRoot . '/db/TeamAccessor.php');
-require_once ($projectRoot . '/entity/Team.php');
+require_once ($projectRoot . '/db/PlayerAccessor.php');
+require_once ($projectRoot . '/entity/Player.php');
 require_once ($projectRoot . '/utils/ChromePhp.php');
 
 $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD'); // $_SERVER['REQUEST_METHOD']
@@ -17,25 +17,25 @@ if ($method === "GET") {
 }
 
 function doGet() {
-    if (!filter_has_var(INPUT_GET, 'teamID')) {
+    if (!filter_has_var(INPUT_GET, 'playerID')) {
         try {
-            $ta = new TeamAccessor();
-            $results = $ta->getAllItems(); // *******
+            $pa = new PlayerAccessor();
+            $results = $pa->getAllItems(); // *******
             $results = json_encode($results, JSON_NUMERIC_CHECK);
             echo $results;
         } catch (Exception $e) {
             echo "ERROR " . $e->getMessage();
         }
     } else {
-        ChromePhp::log("You are requesting item " . filter_input(INPUT_GET, 'teamID'));
+        ChromePhp::log("You are requesting item " . filter_input(INPUT_GET, 'playerID'));
     }
 }
 
 function doDelete() {
-    if (!filter_has_var(INPUT_GET, 'teamID')) {
+    if (!filter_has_var(INPUT_GET, 'playerID')) {
         ChromePhp::log("Sorry, bulk deletes not allowed!");
     } else {
-        $teamID = filter_input(INPUT_GET, "teamID");
+        $teamID = filter_input(INPUT_GET, "playerID");
 
         // create a Team object - only ID matters
         $teamObj = new Team($teamID, "dummyName", "dummyEarnings");
@@ -54,7 +54,8 @@ function doPost() {
     $contents = json_decode($body, true);
 
     // create a Team object
-    $teamObj = new Team($contents['teamID'], $contents['teamName'], $contents['earnings']);
+//    ($playerID, $teamID, $teamName, $firstName, $lastName, $hometown, $province)
+    $teamObj = new Player($contents['playerID'], $contents['teamID'], $contents['teamName'], $contents['firstName'], $contents['lastName'], $contents['hometown'], $contents['province']);
 
     // add the object to DB
     $ta = new TeamAccessor();
@@ -69,7 +70,7 @@ function doPut() {
     $contents = json_decode($body, true);
 
     // create a Team object
-    $teamObj = new Team($contents['teamID'], $contents['teamName'], $contents['earnings']);
+    $teamObj = new Player($contents['playerID'], $contents['teamID'], $contents['teamName'], $contents['firstName'], $contents['lastName'], $contents['hometown'], $contents['province']);
 
     // update the object in the  DB
     $ta = new TeamAccessor();

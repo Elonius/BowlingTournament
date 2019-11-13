@@ -16,6 +16,7 @@ function getAllTeams() {
             if (resp.search("ERROR") >= 0) {
                 alert("oh no...Check console");
             } else {
+                
                 buildTable(xmlhttp.responseText);
             }
         }
