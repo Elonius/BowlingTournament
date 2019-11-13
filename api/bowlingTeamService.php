@@ -1,6 +1,10 @@
 <?php
 
 $projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/shawnmcc/BowlingTournament';
+//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/barrie/BowlingTournament';
+//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/jarrett/BowlingTournament';
+//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/connor/BowlingTournament';
+
 require_once ($projectRoot . '/db/TeamAccessor.php');
 require_once ($projectRoot . '/entity/Team.php');
 require_once ($projectRoot . '/utils/ChromePhp.php');
@@ -20,8 +24,9 @@ function doGet() {
     if (!filter_has_var(INPUT_GET, 'teamID')) {
         try {
             $ta = new TeamAccessor();
-            $results = $ta->getAllItems(); // *******
+            $results = $ta->getAllItems();
             $results = json_encode($results, JSON_NUMERIC_CHECK);
+
             echo $results;
         } catch (Exception $e) {
             echo "ERROR " . $e->getMessage();

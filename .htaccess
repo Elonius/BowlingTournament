@@ -3,4 +3,5 @@
 RewriteEngine on
 
 RewriteRule ^BowlingTournament/teams$ api/bowlingTeamService.php [NC]
+RewriteRule ^BowlingTournament/players$ api/bowlingPlayerService.php [NC]
 #RewriteRule ^BowlingTournament/teams/([0-9]+)$ api/**SOMETHING**.php?teamID=$1 [NC]
