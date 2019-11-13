@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Bowling Score Generator</title>
+    <script src="generator.js"></script>
+    <style>
+        #content {
+            width: 70%;
+            margin: auto;
+        }
+
+        .inputLabel {
+            width: 100px;
+            float: left;
+        }
+
+        .inputField {
+            float: left;
+        }
+
+        .inputPanel:after {
+            content: "";
+            display: block;
+            clear: left;
+        }
+
+        #randomGameButton {
+            margin-top: 20px;
+        }
+
+        #resultsContainer {
+            font-family: monospace;
+            margin-top: 20px;
+        }
+
+        .result {
+            background-color: #EEE;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        table,
+        th,
+        td {
+            border: solid thin black;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 5px;
+            width: 30px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #BBB;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="content">
+
+        <h1>Bowling Score Generator</h1>
+
+        <p>Enter the number of strikes, spares, and open frames (not including bonus balls).</p>
+        <p>The total number of frames must be 10; otherwise, every frame will be [0 0].</p>
+        <div class="inputPanel">
+            <div class="inputLabel">Strikes</div>
+            <div class="inputField"><input required name="strikes" type="number" min="0" max="10"></div>
+        </div>
+        <div class="inputPanel">
+            <div class="inputLabel">Spares</div>
+            <div class="inputField"><input required name="spares" type="number" min="0" max="10"></div>
+        </div>
+        <div class="inputPanel">
+            <div class="inputLabel">Open Frames</div>
+            <div class="inputField"><input required name="openFrames" type="number" min="0" max="10"></div>
+        </div>
+
+        <button id="randomGameButton">Generate Random Game</button>
+        <input id="keepResultsInput" type="checkbox"> Keep Previous Results
+
+
+        <div id="resultsContainer">
+        </div>
+    </div>
+</body>
+
+</html>
