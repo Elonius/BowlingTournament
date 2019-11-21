@@ -1,9 +1,15 @@
 <?php
-$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/smonk/DatabaseDemo4';
-require_once 'ConnectionManager.php';
-require_once ($projectRoot . '/entity/MenuItem.php');
 
-class MenuItemAccessor {
+$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/shawnmcc/BowlingTournament';
+//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/barrie/BowlingTournament';
+//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/jarrett/BowlingTournament';
+//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/connor/BowlingTournament';
+
+require_once 'ConnectionManager.php';
+require_once ($projectRoot . '/entity/Player.php');
+require_once ($projectRoot . '/utils/ChromePhp.php');
+
+class PlayerAccessor {
 
     private $getByIDStatementString = "select * from player where playerID = :playerID";
     private $deleteStatementString = "delete from player where playerID = :playerID";
@@ -70,11 +76,9 @@ class MenuItemAccessor {
                 $obj = new Player($playerID, $teamID, $firstName, $lastName, $hometown, $province);
                 array_push($result, $obj);
             }
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $result = [];
-        }
-        finally {
+        } finally {
             if (!is_null($stmt)) {
                 $stmt->closeCursor();
             }
@@ -89,7 +93,8 @@ class MenuItemAccessor {
      * @return array MenuItem objects, possibly empty
      */
     public function getAllItems() {
-        return $this->getItemsByQuery("select * from MENUITEM");
+        ChromePhp::log("in getAllItems in PlayerAccessor");
+        return $this->getItemsByQuery("select * from player");
     }
 
     /**
@@ -107,7 +112,7 @@ class MenuItemAccessor {
             $dbresults = $this->getByIDStatement->fetch(PDO::FETCH_ASSOC); // not fetchAll
 
             if ($dbresults) {
-                                $playerID = $r['playerID'];
+                $playerID = $r['playerID'];
                 $teamID = $r['teamID'];
                 $firstName = $r['firstName'];
                 $lastName = $r['lastName'];
@@ -115,11 +120,9 @@ class MenuItemAccessor {
                 $province = $r['province'];
                 $result = new Player($playerID, $teamID, $firstName, $lastName, $hometown, $province);
             }
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $result = NULL;
-        }
-        finally {
+        } finally {
             if (!is_null($this->getByIDStatement)) {
                 $this->getByIDStatement->closeCursor();
             }
@@ -136,16 +139,14 @@ class MenuItemAccessor {
     public function deleteItem($item) {
         $success;
 
-        $itemID = $item->getPlayerID(); // only the ID is needed
+        $playerID = $item->getPlayerID(); // only the ID is needed
 
         try {
             $this->deleteStatement->bindParam(":playerID", $playerID);
             $success = $this->deleteStatement->execute();
-        }
-        catch (PDOException $e) {
+        } catch (PDOException $e) {
             $success = false;
-        }
-        finally {
+        } finally {
             if (!is_null($this->deleteStatement)) {
                 $this->deleteStatement->closeCursor();
             }
@@ -177,11 +178,9 @@ class MenuItemAccessor {
             $this->insertStatement->bindParam(":hometown", $hometown);
             $this->insertStatement->bindParam(":province", $province);
             $success = $this->insertStatement->execute();
-        }
-        catch (PDOException $e) {
+        } catch (PDOException $e) {
             $success = false;
-        }
-        finally {
+        } finally {
             if (!is_null($this->insertStatement)) {
                 $this->insertStatement->closeCursor();
             }
@@ -213,11 +212,9 @@ class MenuItemAccessor {
             $this->updateStatement->bindParam(":hometown", $hometown);
             $this->updateStatement->bindParam(":province", $province);
             $success = $this->updateStatement->execute();
-        }
-        catch (PDOException $e) {
+        } catch (PDOException $e) {
             $success = false;
-        }
-        finally {
+        } finally {
             if (!is_null($this->updateStatement)) {
                 $this->updateStatement->closeCursor();
             }
@@ -226,4 +223,5 @@ class MenuItemAccessor {
     }
 
 }
+
 // end class MenuItemAccessor
