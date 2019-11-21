@@ -17,29 +17,53 @@ class Matchup implements JsonSerializable {
         $this->ranking = $ranking;
     }
 
-    public function getMatchID() {
-        return $this->matchID;
-    }
-    
-    public function getGameID() {
-        return $this->roundID;
-    }
+    public function getMatchID(){
+		return $this->matchID;
+	}
 
-    public function getMatchGroup() {
-        return $this->matchGroup;
-    }
+	public function setMatchID($matchID){
+		$this->matchID = $matchID;
+	}
 
-    public function getTeamID() {
-        return $this->teamID;
-    }
+	public function getRoundID(){
+		return $this->roundID;
+	}
 
-    public function getScore() {
-        return $this->score;
-    }
-    
-    public function getRanking() {
-        return $this->ranking;
-    }
+	public function setRoundID($roundID){
+		$this->roundID = $roundID;
+	}
+
+	public function getMatchGroup(){
+		return $this->matchGroup;
+	}
+
+	public function setMatchGroup($matchGroup){
+		$this->matchGroup = $matchGroup;
+	}
+
+	public function getTeamID(){
+		return $this->teamID;
+	}
+
+	public function setTeamID($teamID){
+		$this->teamID = $teamID;
+	}
+
+	public function getScore(){
+		return $this->score;
+	}
+
+	public function setScore($score){
+		$this->score = $score;
+	}
+
+	public function getRanking(){
+		return $this->ranking;
+	}
+
+	public function setRanking($ranking){
+		$this->ranking = $ranking;
+	}
 
     public function jsonSerialize() {
         return get_object_vars($this);

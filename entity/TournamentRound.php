@@ -11,6 +11,10 @@ class Game implements JsonSerializable {
         return $this->roundID;
     }
 
+    public function setRoundID($roundID) {
+        $this->roundID = $roundID;
+    }
+
     public function jsonSerialize() {
         return get_object_vars($this);
     }
