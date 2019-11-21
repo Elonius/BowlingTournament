@@ -1,0 +1,53 @@
+body {
+    font-size: 1.2em;
+}
+
+table, td, th {
+    border: solid thin gray;
+    border-collapse: collapse;
+}
+
+td, th {
+    padding: 10px;
+}
+
+th {
+    background-color: forestgreen;
+    color: #eeeeee;
+    border-color: #eeeeee;
+}
+
+tr:nth-child(odd) {
+    background-color: gainsboro;
+}
+
+#AddUpdatePanel {
+    background-color: peru;
+    padding: 20px;
+    width: 500px;
+}
+
+.hidden {
+    display: none;
+}
+
+.formLabel {
+    width: 100px;
+    float: left;
+}
+
+tr:hover {
+    background-color: lightgreen;
+}
+
+button {
+    padding: 10px;
+}
+
+#weaponLevelInput, #weaponDamageInput, #weaponIDInput {
+    width: 50px;
+}
+
+#weaponDescriptionInput, #weaponLocationInput {
+    width: 375px;
+}
