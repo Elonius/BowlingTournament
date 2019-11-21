@@ -11,7 +11,7 @@ require_once ($projectRoot . '/utils/ChromePhp.php');
 
 class PlayerAccessor {
 
-    private $getByIDStatementString = "select * from player where playerID = :playerID";
+    private $getByIDStatementString = "select * from player where teamID = :teamID";
     private $deleteStatementString = "delete from player where playerID = :playerID";
     private $insertStatementString = "insert into player values (:playerID, :teamID, :firstName, :lastName, :hometown, :province)";
     private $updateStatementString = "update player set playerID = :playerID, teamID = :teamID, firstName = :firstName, lastName = :lastName, hometown - :hometown, province = :province where playerID = :playerID";
@@ -93,8 +93,11 @@ class PlayerAccessor {
      * @return array MenuItem objects, possibly empty
      */
     public function getAllItems() {
-        ChromePhp::log("in getAllItems in PlayerAccessor");
         return $this->getItemsByQuery("select * from player");
+    }
+
+    public function getPlayersOnTeam($teamID) {
+        return $this->getItemsByQuery("select * from player where teamID = $teamID");
     }
 
     /**
@@ -107,7 +110,8 @@ class PlayerAccessor {
         $result = NULL;
 
         try {
-            $this->getByIDStatement->bindParam(":playerID", $playerID);
+//            $this->getByIDStatement->bindParam(":playerID", $playerID);
+            $this->getByIDStatement->bindParam(":teamID", $id);
             $this->getByIDStatement->execute();
             $dbresults = $this->getByIDStatement->fetch(PDO::FETCH_ASSOC); // not fetchAll
 
