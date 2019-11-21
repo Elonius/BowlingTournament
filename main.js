@@ -1,13 +1,14 @@
 window.onload = function () {
 
     // add event handlers for buttons
-    document.querySelector("#getTeams").addEventListener("click", getAllTeams);
+    document.querySelector("#getTeams").addEventListener("click", getTeams);
+    document.querySelector("#getPlayers").addEventListener("click", getPlayers);
 
 //    hideUpdatePanel();
 };
 
 // make AJAX call to PHP to get JSON data
-function getAllTeams() {
+function getTeams() {
     let url = "BowlingTournament/teams";
     let xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function () {
@@ -16,6 +17,26 @@ function getAllTeams() {
             if (resp.search("ERROR") >= 0) {
                 alert("oh no...Check console");
             } else {
+                buildTable(xmlhttp.responseText);
+            }
+        }
+    };
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+
+//    document.querySelector("#GetButton").classList.add("hidden");
+}
+
+function getPlayers() {
+    let url = "BowlingTournament/players";
+    let xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+            let resp = xmlhttp.responseText;
+            if (resp.search("ERROR") >= 0) {
+                alert("oh no...Check console");
+            } else {
+                console.log(xmlhttp.responseText);
                 buildTable(xmlhttp.responseText);
             }
         }
@@ -41,8 +62,17 @@ function buildTable(text) {
         html += "<td>" + row.teamID + "</td>";
         html += "<td>" + row.teamName + "</td>";
         html += "<td>" + row.earnings + "</td>";
+        html += "<td><button class=viewPlayers>View Players</button></td>";
         html += "</tr>";
     }
 
     theTable.innerHTML = html;
+
+    let players = document.querySelectorAll(".viewPlayers");
+
+    // Adding event listeners for the delete and update buttons
+    for (var i = 0; i < players.length; i++) {
+        let temp = players[i];
+        temp.addEventListener("click", getPlayers);
+    }
 }
