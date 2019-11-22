@@ -177,6 +177,7 @@ function buildPlayerTable(text) {
     user = "";
 }
 
+
 function processForm() {
     if (teamOrPlayer === "team") {
         let teamID = document.querySelector("#teamIDInput").value;
@@ -229,11 +230,13 @@ function resetButtons() {
 function showAddUpdateTeamPanel() {
     document.querySelector("#AddUpdateTeamPanel").classList.remove("hidden");
     document.querySelector("#btnAddTeam").classList.add("hidden");
+
     teamOrPlayer = "team";
 }
 
 function showAddUpdatePlayerPanel() {
     document.querySelector("#AddUpdatePlayerPanel").classList.remove("hidden");
     document.querySelector("#btnAddPlayer").classList.add("hidden");
+
     teamOrPlayer = "player";
 }

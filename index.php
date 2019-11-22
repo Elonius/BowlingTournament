@@ -33,9 +33,11 @@
                 <div>
                     <div class="formLabel">Team Name:</div><input id="teamNameInput" type="text">
                 </div>
+
                 <br><div class="divButtons">
                     <button class="DoneButton">Done</button>
                     <button class="CancelButton">Cancel</button>
+
                 </div>
             </div>
 
@@ -60,9 +62,11 @@
                 <div>
                     <div class="formLabel">Province:</div><input id="provinceInput" type="text">
                 </div>
+
                 <br><div class="divButtons">
                     <button class="DoneButton">Done</button>
                     <button class="CancelButton">Cancel</button>
+
                 </div>
             </div>
 

@@ -83,6 +83,23 @@ button {
     text-align: center;
 }
 
+
 .divButtons {
     text-align: center;
+
+
+/*#public {
+    float: left;
+    border: black thin solid;
+    width: 300px;
+}
+
+#admin {
+    float: left;
+    border: black thin solid;
+    width: 300px;
+}*/
+
+.divButtons {
+    margin: 0 auto;
 }
