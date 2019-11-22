@@ -9,7 +9,6 @@ window.onload = function () {
 
 function generateGame() {
     let strikeFrames = +document.querySelector("input[name='strikes']").value;
-
     let spareFrames = +document.querySelector("input[name='spares']").value;
     let openFrames = +document.querySelector("input[name='openFrames']").value;
     let frames = generateFrames(strikeFrames, spareFrames, openFrames);
@@ -25,7 +24,6 @@ function generateGame() {
     let result = "<div class='result'>";
     result += "<p>Balls: " + balls + "</p>";
     result += "<p>Frames: </p>" + framesTable;
-
     result += "<p><strong>Total Score: " + total + "</strong></p>";
 
     result += "</div>";
@@ -172,8 +170,7 @@ function lookAheadTwoBalls(framesArr, index) {
 
     let nextBall = framesArr[index + 1].split(" ")[0];
     let finalBall = framesArr[index + 1].split(" ")[1];
-  if (nextBall === "X" && index < 9) { // ** Might need to be index < 8 or 9 ** So the index doesn't go beynd the array length
-
+    if (nextBall === "X" && index < 9) { // ** Might need to be index < 8 or 9 ** So the index doesn't go beynd the array length
         finalBall = framesArr[index + 2].split(" ")[0];
     }
     if (finalBall === "/") {
@@ -184,7 +181,6 @@ function lookAheadTwoBalls(framesArr, index) {
 
 
 function lookAheadOneBall(framesArr, index) {
-
 //    debugger;
     let temp = framesArr[index + 1];
     if (temp !== undefined && typeof temp === "string") {
@@ -193,16 +189,13 @@ function lookAheadOneBall(framesArr, index) {
     } else {
         return scoreChecker(temp, 0);
     }
-
 }
 
 function parseFrames(frames) {
 
     let scoreArr = [];
     //loop
-
     for (let i = 0; i < 10; i++) {
-
         //store frame score
         let frameScore = 0;
         //get current ball
@@ -220,7 +213,6 @@ function parseFrames(frames) {
         }
         scoreArr[i] = frameScore;
     }
-
     console.log(scoreArr);
     return scoreArr.slice(0, 10);
 }
@@ -249,6 +241,4 @@ function cumulativeSum(frames) {
     }
     
     console.log(arr);
-    return scoreArr.slice(0, 10);
 }
-

@@ -9,9 +9,6 @@ class Game implements JsonSerializable {
     public function getGameStatusID() {
         return $this->gameStatusID;
     }
-    public function setGameStatusID($gameStatus) {
-        $this->gameStatusID = $gameStatus;
-    }
     
     public function jsonSerialize() {
         return get_object_vars($this);

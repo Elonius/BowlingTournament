@@ -1,5 +1,12 @@
 body {
     font-size: 1.2em;
+    margin: 0;
+}
+
+h4 {
+    padding-bottom: 15px;
+    margin: 0;
+    text-align: center;
 }
 
 table {
@@ -24,11 +31,12 @@ tr:nth-child(odd) {
     background-color: gainsboro;
 }
 
-/*#AddUpdatePanel {
-    background-color: peru;
+#AddUpdateTeamPanel, #AddUpdatePlayerPanel {
+    background-color: #ff934b;
     padding: 20px;
-    width: 500px;
-}*/
+    width: fit-content;
+    float: left;
+}
 
 .hidden {
     display: none;
@@ -55,13 +63,12 @@ button {
 .flex-container {
     padding: 0;
     margin: 0;
-
     display: -webkit-box;
     display: -moz-box;
     display: -ms-flexbox;
     display: -webkit-flex;
     display: flex;
-    -webkit-flex-flow: row wrap;
+    /*-webkit-flex-flow: row wrap;*/
     justify-content: space-around;
 }
 
@@ -76,3 +83,19 @@ button {
     text-align: center;
 }
 
+
+/*#public {
+    float: left;
+    border: black thin solid;
+    width: 300px;
+}
+
+#admin {
+    float: left;
+    border: black thin solid;
+    width: 300px;
+}*/
+
+.divButtons {
+    margin: 0 auto;
+}
