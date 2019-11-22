@@ -3,7 +3,7 @@
 //$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/shawnmcc/BowlingTournament';
 //$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/barrie/BowlingTournament';
 //$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/jarrett/BowlingTournament';
-$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/ConnorP/BowlingTournament/Forestgump2';
+$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/connorP/BowlingTournament';
 
 require_once ($projectRoot . '/db/TeamAccessor.php');
 require_once ($projectRoot . '/entity/Team.php');

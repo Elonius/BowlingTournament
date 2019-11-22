@@ -9,16 +9,23 @@ window.onload = function () {
 
 function generateGame() {
     let strikeFrames = +document.querySelector("input[name='strikes']").value;
-    let spareFrames = +document.querySelector("input[name='spares']").value;;
+    let spareFrames = +document.querySelector("input[name='spares']").value;
     let openFrames = +document.querySelector("input[name='openFrames']").value;
     let frames = generateFrames(strikeFrames, spareFrames, openFrames);
-    parseFrames(frames);
+//    debugger;
+
+    let playedGame = parseFrames(frames);
+    let total = sumFrame(playedGame);
+    cumulativeSum(playedGame);
+
     let balls = getBalls(frames);
     let framesTable = formatFramesAsTable(frames);
 
     let result = "<div class='result'>";
     result += "<p>Balls: " + balls + "</p>";
     result += "<p>Frames: </p>" + framesTable;
+    result += "<p><strong>Total Score: " + total + "</strong></p>";
+
     result += "</div>";
 
     let resultsContainer = document.querySelector("#resultsContainer");
@@ -139,8 +146,6 @@ function formatFramesAsTable(frames) {
     return res;
 }
 
-
-
 function scoreChecker(firstThrow, secondThrow) {
 
     //checking if the value of the current frame is 10
@@ -165,7 +170,7 @@ function lookAheadTwoBalls(framesArr, index) {
 
     let nextBall = framesArr[index + 1].split(" ")[0];
     let finalBall = framesArr[index + 1].split(" ")[1];
-    if (nextBall === "X" && index < 10) {
+    if (nextBall === "X" && index < 9) { // ** Might need to be index < 8 or 9 ** So the index doesn't go beynd the array length
         finalBall = framesArr[index + 2].split(" ")[0];
     }
     if (finalBall === "/") {
@@ -176,15 +181,21 @@ function lookAheadTwoBalls(framesArr, index) {
 
 
 function lookAheadOneBall(framesArr, index) {
-    let nextBall = framesArr[index + 1].split(" ")[0];
-    return scoreChecker(nextBall);
+//    debugger;
+    let temp = framesArr[index + 1];
+    if (temp !== undefined && typeof temp === "string") {
+        let nextBall = temp.split(" ")[0];
+        return scoreChecker(nextBall);
+    } else {
+        return scoreChecker(temp, 0);
+    }
 }
 
 function parseFrames(frames) {
 
     let scoreArr = [];
     //loop
-    for (let i = 0; i < frames.length; i++) {
+    for (let i = 0; i < 10; i++) {
         //store frame score
         let frameScore = 0;
         //get current ball
@@ -202,119 +213,32 @@ function parseFrames(frames) {
         }
         scoreArr[i] = frameScore;
     }
-    console.log(scoreArr.slice(0, 9));
+    console.log(scoreArr);
     return scoreArr.slice(0, 10);
 }
 
+function sumFrame(frames) {
+    let total = 0;
 
-// //last thing to fix is score displaying NaN when bonus balls are both strikes 
-// function parseFrames(frames) {
-//     //frames will be an array
-//     //format:
-//     //["9 0", "4 /", "3 6", "4 4", "8 /", "0 5", "1 7", "2 /", "X", "0 2"]
+    for (let i = 0; i < frames.length; i++) {
+        let temp = frames[i];
+        total += temp;
+    }
+    console.log(total);
+    return total;
+}
 
-
-//     let totalScore = [];
-//     //loop through frames
-//     for (let i = 0; i < frames.length; i++) {
-//         if (i !== 10) {
-//             //there are 3 possible results for each frame
-//             //-Open Frame – the number of pins knocked down after both balls is less than 10.
-//             //-Spare – all ten pins are knocked down after two balls, some on the first ball and the remaining pins on the second. oIf a spare occurs in the tenth frame, the player is allowed one bonus ball.
-//             //-Strike – all ten pins are knocked down on the first ball. The second ball is not rolled. 
-//             //-If a strike occurs in the tenth frame, the player is allowed two bonus balls
-//             let currFrame = frames[i];
-
-//             let frameScore = 0;
-//             //strike check
-//             if (currFrame !== "X") {
-//                 let ballOne = currFrame.split(" ")[0];
-//                 let ballTwo = currFrame.split(" ")[1];
-
-
-
-
-//                 //check for slash
-//                 if (ballTwo !== "/") {
-//                     frameScore += +ballOne;
-//                     frameScore += +ballTwo;
-//                 } else {
-//                     //frame had a spare, add the next ball to frameScore
-//                     frameScore += 10;
-
-//                     let nextFrame = frames[i + 1];
-//                     let nextBall = nextFrame.split(" ")[0];
-//                     if (nextBall === "X") {
-//                         frameScore += 10;
-//                     } else {
-//                         frameScore += +nextBall;
-//                     }
-
-//                 }
-//             }
-//             //score was a strike
-//             else {
-//                 frameScore += 10;
-//                 //add the next 2 ball scores to frameScore
-
-//                 let stringFrame = frames[i + 1];
-//                 let bonusFrame = stringFrame.split(" ");
-//                 //check that two balls were thrown in the next frame
-//                 if (bonusFrame[0] !== "X") {
-
-//                     let bonusBallOne = bonusFrame[0];
-//                     let bonusBallTwo = bonusFrame[1];
-//                     //check for a spare
-//                     if (bonusBallTwo === "/") {
-//                         frameScore += 10;
-//                     } else {
-//                         frameScore += +bonusBallOne;
-//                         frameScore += +bonusBallTwo;
-
-//                     }
-
-
-//                 } else {
-
-
-//                     //bonus ball one was X
-//                     frameScore += 10;
-
-//                     //get first ball from frame i+2
-//                     let bonusFrameTwo = frames[i + 1];
-//                     let finalBallOne = bonusFrameTwo.split(" ")[0];
-//                     let finalBallTwo = bonusFrameTwo.split(" ")[1];
-
-//                     if (finalBallOne === "X") {
-//                         frameScore += 10;
-//                     } else {
-//                         frameScore += finalBallOne;
-//                     }
-
-//                     //if finalBallTwo not null
-//                     if (finalBallTwo !== undefined) {
-//                         if (finalBallTwo === "/") {
-//                             frameScore += 10;
-//                         } else {
-//                             frameScore -= 10;
-//                             if (finalBallTwo === "X") {
-//                                 frameScore += 10;
-//                             } else {
-//                                 frameScore += +finalBallTwo;
-
-//                             }
-
-//                         }
-//                     }
-
-//                 }
-
-//                 totalScore[i] = frameScore;
-//             }
-//         }
-
-//         console.log(totalScore);
-
-
-//     }
-// }
+function cumulativeSum(frames) {
+    debugger;
+//    let total = 0;
+    let arr = [];
+    arr[0] = frames[0];
+    
+    for (let i = 1, length = frames.length; i <= length-1; i++) {
+        let frame = frames[i],
+                nextFrame = frames[i+1];
+        arr[i] = arr[i-1] + nextFrame;
+    }
+    
+    console.log(arr);
+}

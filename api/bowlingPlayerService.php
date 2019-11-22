@@ -1,9 +1,9 @@
 <?php
 
-$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/shawnmcc/BowlingTournament';
+//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/shawnmcc/BowlingTournament';
 //$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/barrie/BowlingTournament';
 //$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/jarrett/BowlingTournament';
-//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/connor/BowlingTournament';
+$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/connor/BowlingTournament';
 
 require_once ($projectRoot . '/db/PlayerAccessor.php');
 require_once ($projectRoot . '/entity/Player.php');
@@ -21,11 +21,18 @@ if ($method === "GET") {
 }
 
 function doGet() {
+    $id = filter_input(INPUT_GET, "teamID");
+
     if (!filter_has_var(INPUT_GET, 'playerID')) {
         try {
             $pa = new PlayerAccessor();
-            $results = $pa->getAllItems();
-            $results = json_encode($results, JSON_NUMERIC_CHECK);
+
+            if ($id != null) {
+                $res = $pa->getPlayersOnTeam($id);
+            } else {
+                $res = $pa->getAllItems();
+            }
+            $results = json_encode($res, JSON_NUMERIC_CHECK);
 
             echo $results;
         } catch (Exception $e) {

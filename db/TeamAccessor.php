@@ -1,9 +1,9 @@
 <?php
 
-$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/shawnmcc/BowlingTournament';
+//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/shawnmcc/BowlingTournament';
 //$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/barrie/BowlingTournament';
 //$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/jarrett/BowlingTournament';
-//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/connor/BowlingTournament';
+$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/connorP/BowlingTournament';
 
 require_once 'ConnectionManager.php';
 require_once ($projectRoot . '/entity/Team.php');
