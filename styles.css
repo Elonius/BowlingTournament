@@ -84,6 +84,10 @@ button {
 }
 
 
+.divButtons {
+    text-align: center;
+
+
 /*#public {
     float: left;
     border: black thin solid;

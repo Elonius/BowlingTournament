@@ -1,11 +1,24 @@
+let user = "";
+let addOrUpdate = "";
+let teamOrPlayer = "";
+
 window.onload = function () {
-    window.user = "";
     // add event handlers for buttons
     document.querySelector("#getTeams").addEventListener("click", guestGetTeams);
     document.querySelector("#adminGetTeams").addEventListener("click", adminGetTeams);
     document.querySelector("#adminGetPlayers").addEventListener("click", adminGetAllPlayers);
     document.querySelector("#btnAddTeam").addEventListener("click", showAddUpdateTeamPanel);
     document.querySelector("#btnAddPlayer").addEventListener("click", showAddUpdatePlayerPanel);
+
+    // Eventlisteners for cancel/done buttons
+    let cancelBtns = document.querySelectorAll(".CancelButton");
+    let doneBtns = document.querySelectorAll(".doneButton");
+    for (var i = 0; i < cancelBtns.length; i++) {
+        let tempCancel = cancelBtns[i];
+        let tempDone = doneBtns[i];
+        tempCancel.addEventListener("click", resetButtons);
+        tempDone.addEventListener("click", processForm);
+    }
 };
 
 function guestGetTeams() {
@@ -164,6 +177,49 @@ function buildPlayerTable(text) {
     user = "";
 }
 
+
+function processForm() {
+    if (teamOrPlayer === "team") {
+        let teamID = document.querySelector("#teamIDInput").value;
+        let teamName = document.querySelector("#teamNameInput").value;
+
+        if (teamName === "") {
+            alert("Enter a Team Name");
+        } else {
+            //processTeam();
+            let obj = {
+                teamID: teamID,
+                teamName: teamName
+            };
+
+            // Had to use a temp id instead of the 'id' variable since id is ""
+            let url = "stardewValley/weapons/" + 999;
+            let method = (addOrUpdate === "add") ? "POST" : "PUT";
+
+            // AJAX
+            let xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+                    let resp = xmlhttp.responseText;
+                    if (resp !== "1") {
+                        alert("Item NOT added. Check console.");
+                    } else {
+                        getAllWeapons();
+                        hideUpdatePanel();
+                    }
+                }
+            };
+            xmlhttp.open(method, url, true);
+            xmlhttp.send(JSON.stringify(obj));
+        } // End of else
+    } else {
+        let teamID = document.querySelector("#teamIDInput").value;
+        let teamName = document.querySelector("#teamNameInput").value;
+
+        processPlayer();
+    }
+}
+
 function resetButtons() {
     document.querySelector("#btnAddTeam").classList.add("hidden");
     document.querySelector("#btnAddPlayer").classList.add("hidden");
@@ -174,9 +230,13 @@ function resetButtons() {
 function showAddUpdateTeamPanel() {
     document.querySelector("#AddUpdateTeamPanel").classList.remove("hidden");
     document.querySelector("#btnAddTeam").classList.add("hidden");
+
+    teamOrPlayer = "team";
 }
 
 function showAddUpdatePlayerPanel() {
     document.querySelector("#AddUpdatePlayerPanel").classList.remove("hidden");
     document.querySelector("#btnAddPlayer").classList.add("hidden");
+
+    teamOrPlayer = "player";
 }
