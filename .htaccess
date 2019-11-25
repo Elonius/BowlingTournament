@@ -2,5 +2,7 @@
 #Note: "NC" means case insensitive
 RewriteEngine on
 
-RewriteRule ^BowlingTournament/teams$ api/bowlingTeamService.php [NC]
-#RewriteRule ^BowlingTournament/teams/([0-9]+)$ api/**SOMETHING**.php?teamID=$1 [NC]
+RewriteRule ^bowlingTeamService/team$ api/bowlingTeamService.php [NC]
+RewriteRule ^bowlingTeamService/team/([0-9]+)$ api/bowlingTeamService.php?teamID=$1 [NC]
+RewriteRule ^bowlingPlayerService/player$ api/bowlingPlayerService.php [NC]
+RewriteRule ^bowlingPlayerService/player/([0-9]+)$ api/bowlingPlayerService.php?playerID=$1 [NC]

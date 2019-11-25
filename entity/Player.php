@@ -3,16 +3,14 @@
 class Player implements JsonSerializable {
     private $playerID;
     private $teamID;  
-    private $teamName; 
     private $firstName;
     private $lastName;
     private $hometown;
     private $province;
     
-    public function __construct($playerID, $teamID, $teamName, $firstName, $lastName, $hometown, $province) {
-        $this->earnings = $playerID;
+    public function __construct($playerID, $teamID, $firstName, $lastName, $hometown, $province) {
+        $this->playerID = $playerID;
         $this->teamID = $teamID;
-        $this->teamName = $teamName;
         $this->firstName = $firstName;
         $this->lastName = $lastName;
         $this->hometown = $hometown;  
@@ -25,10 +23,6 @@ class Player implements JsonSerializable {
     
     public function getTeamID() {
         return $this->teamID;
-    }
-
-    public function gettTeamName() {
-        return $this->teamName;
     }
 
     public function getFirstName() {
