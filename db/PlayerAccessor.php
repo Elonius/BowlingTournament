@@ -1,14 +1,33 @@
 <?php
-$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/ja/bowlingTournament';
+
+// $projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/ja/bowlingTournament';
+// require_once 'ConnectionManager.php';
+// require_once ($projectRoot . '/entity/Player.php');
+
+// class PlayerAccessor {
+
+//     private $getByIDStatementString = "select * from player where playerID = :playerID";
+//     private $deleteStatementString = "delete from player where playerID = :playerID";
+//     private $insertStatementString = "insert into player values (:playerID, :teamID, :firstName, :lastName, :hometown, :province)";
+//     private $updateStatementString = "update player set playerID = :playerID, teamID = :teamID, firstName = :firstName, lastName = :lastName, hometown = :hometown, province = :province where playerID = :playerID";
+
+
+$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/shawnmcc/BowlingTournament';
+//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/barrie/BowlingTournament';
+//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/jarrett/BowlingTournament';
+//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/connor/BowlingTournament';
+
 require_once 'ConnectionManager.php';
 require_once ($projectRoot . '/entity/Player.php');
+require_once ($projectRoot . '/utils/ChromePhp.php');
 
 class PlayerAccessor {
 
-    private $getByIDStatementString = "select * from player where playerID = :playerID";
+    private $getByIDStatementString = "select * from player where teamID = :teamID";
     private $deleteStatementString = "delete from player where playerID = :playerID";
     private $insertStatementString = "insert into player values (:playerID, :teamID, :firstName, :lastName, :hometown, :province)";
-    private $updateStatementString = "update player set playerID = :playerID, teamID = :teamID, firstName = :firstName, lastName = :lastName, hometown = :hometown, province = :province where playerID = :playerID";
+    private $updateStatementString = "update player set playerID = :playerID, teamID = :teamID, firstName = :firstName, lastName = :lastName, hometown - :hometown, province = :province where playerID = :playerID";
+
     private $conn = NULL;
     private $getByIDStatement = NULL;
     private $deleteStatement = NULL;
@@ -70,11 +89,11 @@ class PlayerAccessor {
                 $obj = new Player($playerID, $teamID, $firstName, $lastName, $hometown, $province);
                 array_push($result, $obj);
             }
-        }
-        catch (Exception $e) {
+
+        } catch (Exception $e) {
             $result = [];
-        }
-        finally {
+        } finally {
+
             if (!is_null($stmt)) {
                 $stmt->closeCursor();
             }
@@ -92,6 +111,11 @@ class PlayerAccessor {
         return $this->getItemsByQuery("select * from player");
     }
 
+
+    public function getPlayersOnTeam($teamID) {
+        return $this->getItemsByQuery("select * from player where teamID = $teamID");
+    }
+
     /**
      * Gets the menu item with the specified ID.
      * 
@@ -102,12 +126,19 @@ class PlayerAccessor {
         $result = NULL;
 
         try {
-            $this->getByIDStatement->bindParam(":playerID", $playerID);
+
+           // $this->getByIDStatement->bindParam(":playerID", $playerID);
+
+//            $this->getByIDStatement->bindParam(":playerID", $playerID);
+            $this->getByIDStatement->bindParam(":teamID", $id);
+
             $this->getByIDStatement->execute();
             $dbresults = $this->getByIDStatement->fetch(PDO::FETCH_ASSOC); // not fetchAll
 
             if ($dbresults) {
-                                $playerID = $r['playerID'];
+
+                $playerID = $r['playerID'];
+
                 $teamID = $r['teamID'];
                 $firstName = $r['firstName'];
                 $lastName = $r['lastName'];
@@ -115,11 +146,11 @@ class PlayerAccessor {
                 $province = $r['province'];
                 $result = new Player($playerID, $teamID, $firstName, $lastName, $hometown, $province);
             }
-        }
-        catch (Exception $e) {
+
+        } catch (Exception $e) {
             $result = NULL;
-        }
-        finally {
+        } finally {
+
             if (!is_null($this->getByIDStatement)) {
                 $this->getByIDStatement->closeCursor();
             }
@@ -141,11 +172,11 @@ class PlayerAccessor {
         try {
             $this->deleteStatement->bindParam(":playerID", $playerID);
             $success = $this->deleteStatement->execute();
-        }
-        catch (PDOException $e) {
+
+        } catch (PDOException $e) {
             $success = false;
-        }
-        finally {
+        } finally {
+
             if (!is_null($this->deleteStatement)) {
                 $this->deleteStatement->closeCursor();
             }
@@ -177,11 +208,11 @@ class PlayerAccessor {
             $this->insertStatement->bindParam(":hometown", $hometown);
             $this->insertStatement->bindParam(":province", $province);
             $success = $this->insertStatement->execute();
-        }
-        catch (PDOException $e) {
+
+        } catch (PDOException $e) {
             $success = false;
-        }
-        finally {
+        } finally {
+
             if (!is_null($this->insertStatement)) {
                 $this->insertStatement->closeCursor();
             }
@@ -213,11 +244,11 @@ class PlayerAccessor {
             $this->updateStatement->bindParam(":hometown", $hometown);
             $this->updateStatement->bindParam(":province", $province);
             $success = $this->updateStatement->execute();
-        }
-        catch (PDOException $e) {
+
+        } catch (PDOException $e) {
             $success = false;
-        }
-        finally {
+        } finally {
+
             if (!is_null($this->updateStatement)) {
                 $this->updateStatement->closeCursor();
             }

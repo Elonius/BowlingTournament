@@ -1,6 +1,10 @@
 <?php
 
 $projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/shawnmcc/BowlingTournament';
+//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/barrie/BowlingTournament';
+//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/jarrett/BowlingTournament';
+//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/connor/BowlingTournament';
+
 require_once ($projectRoot . '/db/TeamAccessor.php');
 require_once ($projectRoot . '/entity/Team.php');
 require_once ($projectRoot . '/utils/ChromePhp.php');
@@ -23,6 +27,7 @@ function doGet() {
             $ta = new TeamAccessor();
             $results = $ta->getAllItems();
             $results = json_encode($results, JSON_NUMERIC_CHECK);
+
             echo $results;
         } catch (Exception $e) {
             echo "ERROR " . $e->getMessage();
@@ -43,7 +48,9 @@ function doDelete() {
 
         // delete the object from DB
         $ta = new TeamAccessor();
+
         $success = $ta->deleteItem($teamObj);
+
         echo $success;
     }
 }
@@ -59,7 +66,7 @@ function doPost() {
 
     // add the object to DB
     $ta = new TeamAccessor();
-    $success = $ta->insertItem($teamObj);
+    $success = $ta->insertItem($teamObj); // *******
     echo $success;
 }
 
@@ -74,6 +81,6 @@ function doPut() {
 
     // update the object in the  DB
     $ta = new TeamAccessor();
-    $success = $ta->updateItem($teamObj);
+    $success = $ta->updateItem($teamObj); // *******
     echo $success;
 }

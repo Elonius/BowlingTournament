@@ -1,14 +1,30 @@
 <?php
-$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/ja/bowlingTournament';
+
+// $projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/ja/bowlingTournament';
+// require_once 'ConnectionManager.php';
+// require_once ($projectRoot . '/entity/Team.php');
+
+
+$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/shawnmcc/BowlingTournament';
+//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/barrie/BowlingTournament';
+//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/jarrett/BowlingTournament';
+//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/connor/BowlingTournament';
+
 require_once 'ConnectionManager.php';
 require_once ($projectRoot . '/entity/Team.php');
+require_once ($projectRoot . '/utils/ChromePhp.php');
+
 
 class TeamAccessor {
 
     private $getByIDStatementString = "select * from team where teamID = :teamID";
     private $deleteStatementString = "delete from team where teamID = :teamID";
     private $insertStatementString = "insert into team values (:teamID, :teamName, :earnings)";
+
     private $updateStatementString = "update team set teamID = :teamID, teamName = :teamName, earnings = :earnings where teamID = :teamID";
+
+//     private $updateStatementString = "update team set teamID = :teamID, teamName = :teamName, earnings = :earnings";
+
     private $conn = NULL;
     private $getByIDStatement = NULL;
     private $deleteStatement = NULL;
@@ -67,11 +83,11 @@ class TeamAccessor {
                 $obj = new Team($teamID, $teamName, $earnings);
                 array_push($result, $obj);
             }
-        }
-        catch (Exception $e) {
+
+        } catch (Exception $e) {
             $result = [];
-        }
-        finally {
+        } finally {
+
             if (!is_null($stmt)) {
                 $stmt->closeCursor();
             }
@@ -109,11 +125,11 @@ class TeamAccessor {
                 $earnings = $r['earnings'];
                 $result = new Team($teamID, $teamName, $earnings);
             }
-        }
-        catch (Exception $e) {
+
+        } catch (Exception $e) {
             $result = NULL;
-        }
-        finally {
+        } finally {
+
             if (!is_null($this->getByIDStatement)) {
                 $this->getByIDStatement->closeCursor();
             }
@@ -135,11 +151,11 @@ class TeamAccessor {
         try {
             $this->deleteStatement->bindParam(":teamID", $teamID);
             $success = $this->deleteStatement->execute();
-        }
-        catch (PDOException $e) {
+
+        } catch (PDOException $e) {
             $success = false;
-        }
-        finally {
+        } finally {
+
             if (!is_null($this->deleteStatement)) {
                 $this->deleteStatement->closeCursor();
             }
@@ -165,11 +181,11 @@ class TeamAccessor {
             $this->insertStatement->bindParam(":teamName", $teamName);
             $this->insertStatement->bindParam(":earnings", $earnings);
             $success = $this->insertStatement->execute();
-        }
-        catch (PDOException $e) {
+
+        } catch (PDOException $e) {
             $success = false;
-        }
-        finally {
+        } finally {
+
             if (!is_null($this->insertStatement)) {
                 $this->insertStatement->closeCursor();
             }
@@ -195,11 +211,11 @@ class TeamAccessor {
             $this->updateStatement->bindParam(":teamName", $teamName);
             $this->updateStatement->bindParam(":earnings", $earnings);
             $success = $this->updateStatement->execute();
-        }
-        catch (PDOException $e) {
+
+        } catch (PDOException $e) {
             $success = false;
-        }
-        finally {
+        } finally {
+
             if (!is_null($this->updateStatement)) {
                 $this->updateStatement->closeCursor();
             }
@@ -208,4 +224,5 @@ class TeamAccessor {
     }
 
 }
+
 // end class MenuItemAccessor
