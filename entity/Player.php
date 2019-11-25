@@ -8,7 +8,7 @@ class Player implements JsonSerializable {
     private $lastName;
     private $hometown;
     private $province;
-
+  
     public function __construct($playerID, $teamID, $firstName, $lastName, $hometown, $province) {
         $this->playerID = $playerID;
         $this->teamID = $teamID;

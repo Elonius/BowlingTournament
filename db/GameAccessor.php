@@ -1,30 +1,14 @@
 <?php
-
-// $projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/ja/bowlingTournament';
-// require_once 'ConnectionManager.php';
-// require_once ($projectRoot . '/entity/Team.php');
-
-
-$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/shawnmcc/BowlingTournament';
-//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/barrie/BowlingTournament';
-//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/jarrett/BowlingTournament';
-//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/connor/BowlingTournament';
-
+$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/ja/bowlingTournament';
 require_once 'ConnectionManager.php';
-require_once ($projectRoot . '/entity/Team.php');
-require_once ($projectRoot . '/utils/ChromePhp.php');
-
+require_once ($projectRoot . '/entity/Game.php');
 
 class TeamAccessor {
 
-    private $getByIDStatementString = "select * from team where teamID = :teamID";
-    private $deleteStatementString = "delete from team where teamID = :teamID";
-    private $insertStatementString = "insert into team values (:teamID, :teamName, :earnings)";
-
-    private $updateStatementString = "update team set teamID = :teamID, teamName = :teamName, earnings = :earnings where teamID = :teamID";
-
-//     private $updateStatementString = "update team set teamID = :teamID, teamName = :teamName, earnings = :earnings";
-
+    private $getByIDStatementString = "select * from game where gameID = :gameID";
+    private $deleteStatementString = "delete from game where gameID = :gameID";
+    private $insertStatementString = "insert into game values (:gameID, :matchID, :gameNumber, :gameStatusID, :score, :balls)";
+    private $updateStatementString = "update game set gameID = :gameID, matchID = :matchID, gameNumber = :gameNumber, gameStatusID = :gameStatusID, score = :score, balls = :balls where gameID = :gameID";
     private $conn = NULL;
     private $getByIDStatement = NULL;
     private $deleteStatement = NULL;
@@ -77,17 +61,20 @@ class TeamAccessor {
             $dbresults = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             foreach ($dbresults as $r) {
-                $teamID = $r['teamID'];
-                $teamName = $r['teamName'];
-                $earnings = $r['earnings'];
-                $obj = new Team($teamID, $teamName, $earnings);
+                $gameID = $r['gameID'];
+                $matchID = $r['matchID'];
+                $gameNumber = $r['gameNumber'];
+                $gameStatusID = $r['gameStatusID'];
+                $score = $r['score'];
+                $balls = $r['balls'];
+                $obj = new Game($gameID, $matchID, $gameNumber, $gameStatusID, $score, $balls);
                 array_push($result, $obj);
             }
-
-        } catch (Exception $e) {
+        }
+        catch (Exception $e) {
             $result = [];
-        } finally {
-
+        }
+        finally {
             if (!is_null($stmt)) {
                 $stmt->closeCursor();
             }
@@ -102,7 +89,7 @@ class TeamAccessor {
      * @return array MenuItem objects, possibly empty
      */
     public function getAllItems() {
-        return $this->getItemsByQuery("select * from team");
+        return $this->getItemsByQuery("select * from game");
     }
 
     /**
@@ -115,21 +102,24 @@ class TeamAccessor {
         $result = NULL;
 
         try {
-            $this->getByIDStatement->bindParam(":teamID", $id);
+            $this->getByIDStatement->bindParam(":gameID", $id);
             $this->getByIDStatement->execute();
             $dbresults = $this->getByIDStatement->fetch(PDO::FETCH_ASSOC); // not fetchAll
 
-            if ($dbresults) {
-                $teamID = $r['teamID'];
-                $teamName = $r['teamName'];
-                $earnings = $r['earnings'];
-                $result = new Team($teamID, $teamName, $earnings);
+            if ($dbresults) { $gameID = $r['gameID'];
+                $matchID = $r['matchID'];
+                $gameNumber = $r['gameNumber'];
+                $gameStatusID = $r['gameStatusID'];
+                $score = $r['score'];
+                $balls = $r['balls'];
+                $obj = new Game($gameID, $matchID, $gameNumber, $gameStatusID, $score, $balls);
+                
             }
-
-        } catch (Exception $e) {
+        }
+        catch (Exception $e) {
             $result = NULL;
-        } finally {
-
+        }
+        finally {
             if (!is_null($this->getByIDStatement)) {
                 $this->getByIDStatement->closeCursor();
             }
@@ -146,16 +136,16 @@ class TeamAccessor {
     public function deleteItem($item) {
         $success;
 
-        $teamID = $item->getTeamID(); // only the ID is needed
+        $gameID = $item->getGameID(); // only the ID is needed
 
         try {
-            $this->deleteStatement->bindParam(":teamID", $teamID);
+            $this->deleteStatement->bindParam(":gameID", $gameID);
             $success = $this->deleteStatement->execute();
-
-        } catch (PDOException $e) {
+        }
+        catch (PDOException $e) {
             $success = false;
-        } finally {
-
+        }
+        finally {
             if (!is_null($this->deleteStatement)) {
                 $this->deleteStatement->closeCursor();
             }
@@ -171,21 +161,27 @@ class TeamAccessor {
      */
     public function insertItem($item) {
         $success;
-
-        $teamID = $item->getTeamID();
-        $teamName = $item->getTeamName();
-        $earnings = $item->getEarnings();
+        $gameID = $item->getGameID();
+        $matchID = $item->getMatchID();
+        $gameNumber = $item->getGameNumber();
+        $gameStatusID = $item->getGameStatusID();
+        $score = $item->getScore();
+        $balls = $item->getBalls();
+        $obj = new Game($gameID, $matchID, $gameNumber, $gameStatusID, $score, $balls);
 
         try {
-            $this->insertStatement->bindParam(":teamID", $teamID);
-            $this->insertStatement->bindParam(":teamName", $teamName);
-            $this->insertStatement->bindParam(":earnings", $earnings);
+            $this->insertStatement->bindParam(":gameID", $gameID);
+            $this->insertStatement->bindParam(":matchID", $matchID);
+            $this->insertStatement->bindParam(":gameNumber", $gameNumber);
+            $this->insertStatement->bindParam(":gameID", $gameStatusID);
+            $this->insertStatement->bindParam(":score", $score);
+            $this->insertStatement->bindParam(":balls", $balls);
             $success = $this->insertStatement->execute();
-
-        } catch (PDOException $e) {
+        }
+        catch (PDOException $e) {
             $success = false;
-        } finally {
-
+        }
+        finally {
             if (!is_null($this->insertStatement)) {
                 $this->insertStatement->closeCursor();
             }
@@ -202,20 +198,28 @@ class TeamAccessor {
     public function updateItem($item) {
         $success;
 
-        $teamID = $item->getTeamID();
-        $teamName = $item->getTeamName();
-        $earnings = $item->getEarnings();
+        $gameID = $item->getGameID();
+        $matchID = $item->getMatchID();
+        $gameNumber = $item->getGameNumber();
+        $gameStatusID = $item->getGameStatusID();
+        $score = $item->getScore();
+        $balls = $item->getBalls();
+        $obj = new Game($gameID, $matchID, $gameNumber, $gameStatusID, $score, $balls);
 
         try {
-            $this->updateStatement->bindParam(":teamID", $teamID);
-            $this->updateStatement->bindParam(":teamName", $teamName);
-            $this->updateStatement->bindParam(":earnings", $earnings);
+            $this->updateStatement->bindParam(":gameID", $gameID);
+            $this->updateStatement->bindParam(":matchID", $matchID);
+            $this->updateStatement->bindParam(":gameNumber", $gameNumber);
+            $this->updateStatement->bindParam(":gameStatusID", $gameStatusID);
+            $this->updateStatement->bindParam(":score", $score);
+            $this->updateStatement->bindParam(":balls", $balls);
+            
             $success = $this->updateStatement->execute();
-
-        } catch (PDOException $e) {
+        }
+        catch (PDOException $e) {
             $success = false;
-        } finally {
-
+        }
+        finally {
             if (!is_null($this->updateStatement)) {
                 $this->updateStatement->closeCursor();
             }
@@ -224,5 +228,4 @@ class TeamAccessor {
     }
 
 }
-
 // end class MenuItemAccessor
