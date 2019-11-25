@@ -1,6 +1,6 @@
 <?php
 
-$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/ja/bowlingTournament';
+$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/shawnmcc/BowlingTournament';
 require_once ($projectRoot . '/db/TeamAccessor.php');
 require_once ($projectRoot . '/entity/Team.php');
 require_once ($projectRoot . '/utils/ChromePhp.php');
