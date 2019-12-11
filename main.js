@@ -2,9 +2,10 @@ let user = "";
 let addOrUpdate = "";
 let teamOrPlayer = "";
 let teamArray;
-let moreThanOneClick = 0;
+let tick = 0;
 let matchupsArr;
 let globalTeams;
+let globalPlayers;
 
 const SPARE_CHAR = "/";
 const STRIKE_CHAR = "X";
@@ -12,7 +13,7 @@ const BALL_SEPARATOR_CHAR = " ";
 
 window.onload = function () {
     getAllTeams();
-
+    loadPlayers();
 
     // add event handlers for buttons
     document.querySelector("#getTeams").addEventListener("click", guestGetTeams);
@@ -22,21 +23,11 @@ window.onload = function () {
     document.querySelector("#adminGenerateMatchups").addEventListener("click", generateRandomMatchups);
     document.querySelector("#btnAddTeam").addEventListener("click", showAddUpdateTeamPanel);
     document.querySelector("#btnAddPlayer").addEventListener("click", showAddUpdatePlayerPanel);
-    document.querySelector("#viewMatchups").addEventListener("click", viewMatchups);
-    document.querySelector("#adminGenerateQualRounds").addEventListener("click", generateQualRounds);
-
-    // Eventlisteners for cancel/done buttons
-    let cancelBtns = document.querySelectorAll(".CancelButton");
-//    let teamDoneBtns = document.querySelector(".TeamDoneButton").addEventListener("click", addTeamOrPlayer);
-//    let playerDoneBtns = document.querySelector(".PlayerDoneButton").addEventListener("click", addTeamOrPlayer);
-    for (var i = 0; i < cancelBtns.length; i++) {
-        let tempCancel = cancelBtns[i];
-//        let tempDone = doneBtns[i];
-//        tempCancel.addEventListener("click", resetButtons);
-        tempCancel.addEventListener("click", resetPage());
-//        tempDone.addEventListener("click", addTeam);
-//        tempDone.addEventListener("click", addTeamOrPlayer);
-    }
+//    document.querySelector("#viewMatchups").addEventListener("click", viewMatchups);
+    document.querySelector("#viewMatchups").addEventListener("click", generateQualGames);
+    document.querySelector("#adminAdvanceQual").addEventListener("click", autoGenerateQualRounds);
+//    document.querySelector("#adminGenerateQualRounds").addEventListener("click", generateQualRounds);
+//    document.querySelector("#adminViewQualGames").addEventListener("click", generateQualGames);
 
     resetPage();
 };
@@ -50,6 +41,9 @@ function resetPage() {
     document.querySelector("#guestTeamTable").classList.add("hidden");
     document.querySelector("#playerTable").classList.add("hidden");
     document.querySelector("#standingsTable").classList.add("hidden");
+    document.querySelector("#availGamesTable").classList.add("hidden");
+    document.querySelector("#score").classList.add("hidden");
+    document.querySelector("#matchups").classList.add("hidden");
 }
 
 function guestGetTeams() {
@@ -93,7 +87,6 @@ function getTeams() {
     };
     xmlhttp.open("GET", url, true);
     xmlhttp.send();
-
 }
 
 // Used for the buildTeams function
@@ -108,6 +101,23 @@ function getPlayers(e) {
                 alert("oh no...Check console");
             } else {
                 buildPlayerTable(resp);
+            }
+        }
+    };
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+}
+
+function loadPlayers() {
+    let url = "BowlingPlayerService/players";
+    let xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+            let resp = xmlhttp.responseText;
+            if (resp.search("ERROR") >= 0) {
+                alert("oh no...Check console");
+            } else {
+                globalPlayers = resp;
             }
         }
     };
@@ -268,8 +278,6 @@ function editTeam(e) {
     document.documentElement.scrollTop = 0;
 }
 
-
-
 // text is a JSON string containing an array
 function buildPlayerTable(text) {
     resetPage();
@@ -286,8 +294,16 @@ function buildPlayerTable(text) {
     let theTable = document.querySelector("#playerTable");
     let html = theTable.querySelector("tr").innerHTML;
 
+    // ******************** Need to stop adding these THs *************************
+    if (user === "admin") {
+        document.querySelector("#playerTable").deleteTHead();
+        html = "<th>ID</th><th>Team ID</th><th>First Name</th><th>Last Name</th><th>Hometown</th><th>Province</th><th>Edit</th><th>Delete</th>";
+//        tick++;
+    } else if (user === "guest") {
+        document.querySelector("#playerTable").deleteTHead();
+        html = "<th>ID</th><th>Team ID</th><th>First Name</th><th>Last Name</th><th>Hometown</th><th>Province</th>";
+    }
     html += "<div>";
-    html += "<table>";
     for (let i = 0; i < arr.length; i++) {
         let row = arr[i];
         html += "<tr>";
@@ -297,13 +313,13 @@ function buildPlayerTable(text) {
         html += "<td>" + row.lastName + "</td>";
         html += "<td>" + row.hometown + "</td>";
         html += "<td>" + row.province + "</td>";
-        if (user !== "guest") {
+        if (user === "admin") {
             html += "<td><button class=editPlayer>Edit</button></td>";
             html += "<td><button class=deletePlayer>Delete</button></td>";
         }
         html += "</tr>";
     }
-    html += "</table>";
+
     theTable.innerHTML = html;
     // End of the table
 
@@ -446,49 +462,6 @@ function deleteTeam(e) {
     xmlhttp.open("DELETE", url, true);
     xmlhttp.send();
 }
-
-
-//function processForm() {
-//    if (teamOrPlayer === "team") {
-//        let teamID = document.querySelector("#teamIDInput").value;
-//        let teamName = document.querySelector("#teamNameInput").value;
-//
-//        if (teamName === "") {
-//            alert("Enter a Team Name");
-//        } else {
-//            //processTeam();
-//            let obj = {
-//                teamID: teamID,
-//                teamName: teamName
-//            };
-//
-//            // Had to use a temp id instead of the 'id' variable since id is ""
-//            let url = "stardewValley/weapons/" + 999;
-//            let method = (addOrUpdate === "add") ? "POST" : "PUT";
-//
-//            // AJAX
-//            let xmlhttp = new XMLHttpRequest();
-//            xmlhttp.onreadystatechange = function () {
-//                if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-//                    let resp = xmlhttp.responseText;
-//                    if (resp !== "1") {
-//                        alert("Item NOT added. Check console.");
-//                    } else {
-//                        getAllWeapons();
-//                        hideUpdatePanel();
-//                    }
-//                }
-//            };
-//            xmlhttp.open(method, url, true);
-//            xmlhttp.send(JSON.stringify(obj));
-//        } // End of else
-//    } else {
-//        let teamID = document.querySelector("#teamIDInput").value;
-//        let teamName = document.querySelector("#teamNameInput").value;
-//
-//        processPlayer();
-//    }
-//}
 
 function addTeamOrPlayer() {
 //    debugger;
@@ -912,7 +885,7 @@ function generateQualRounds() {
     //call my randomize qualifiers function
     //scoreQualRandomly
     let scoresObjectsArr = scoreQualRandomly();
-    let newArr = [];
+//    let newArr = [];
 
     scoresObjectsArr.sort((a, b) => (a.score > b.score) ? -1 : 1);
 
@@ -936,7 +909,8 @@ function generateQualRounds() {
                     console.log(resp);
                 } else {
 //                    resetButtons();
-                    adminGetTeams();
+//                    adminGetTeams();
+                    console.log(resp);
                 }
             }
         };
@@ -981,35 +955,70 @@ function getAllTeams() {
 }
 
 function displayMatchupsAndTeams() {
+    resetPage();
+
+    document.querySelector("#matchups").classList.remove("hidden");
+
     let matchups = JSON.parse(matchupsArr);
     let teams = JSON.parse(globalTeams);
 
-    let output = [];
+    matchups = matchups.sort((a, b) => (a.score > b.score) ? -1 : 1);
+    matchups.length = 16;
 
-    for (var i = 0; i < matchups.length; i++) {
-        let matchup = matchups[i];
-        let matchupTeam = matchup.teamID;
+    // The table
+    let theTable = document.querySelector("#matchups");
+    let html = theTable.querySelector("tr").innerHTML;
 
-        for (var j = 0; j < teams.length; j++) {
-            let team = teams[j];
-            let teamID = team.teamID;
+    html += "<div>";
 
-            if (matchupTeam === teamID) {
-                let ranking = matchup.ranking;
-                let teamName = team.teamName;
+    for (let i = 0; i < matchups.length; i++) {
+        let row = matchups[i];
 
-                let rankingObject = {
-                    ranking: ranking,
-                    teamName: teamName,
-                    teamID: teamID
-                };
-
-                output.push(rankingObject);
+        html += "<tr>";
+        html += "<td>" + (i + 1) + "</td>";
+        html += "<td>" + row.matchID + "</td>";
+        html += "<td>" + row.roundID + "</td>";
+        html += "<td>" + row.matchgroup + "</td>";
+//        html += "<td>" + row.teamID + "</td>";
+        for (var t = 0; t < teams.length; t++) {
+            if (row.teamID === teams[t].teamID) {
+                html += "<td>" + teams[t].teamName + "</td>";
             }
         }
+        html += "<td>" + row.score + "</td>";
+        html += "</tr>";
     }
 
-    buildStandingsTable(output);
+    html += "</div>";
+    theTable.innerHTML = html;
+    // End of table
+
+//    let output = [];
+//
+//    for (var i = 0; i < matchups.length; i++) {
+//        let matchup = matchups[i];
+//        let matchupTeam = matchup.teamID;
+//
+//        for (var j = 0; j < teams.length; j++) {
+//            let team = teams[j];
+//            let teamID = team.teamID;
+//
+//            if (matchupTeam === teamID) {
+//                let ranking = matchup.ranking;
+//                let teamName = team.teamName;
+//
+//                let rankingObject = {
+//                    ranking: ranking,
+//                    teamName: teamName,
+//                    teamID: teamID
+//                };
+//
+//                output.push(rankingObject);
+//            }
+//        }
+//    }
+//
+//    buildStandingsTable(output);
 }
 
 
@@ -1060,6 +1069,171 @@ function viewGames(e) {
         if (temp.teamID === id) {
             console.log(temp);
         }
+    }
+}
+
+function generateQualGames() {
+    let gamesArr;
+    // call ajax
+    let url = "BowlingGameService/games";
+    let xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+            let resp = xmlhttp.responseText;
+            if (resp.search("ERROR") >= 0) {
+                alert("oh no...Check console");
+            } else {
+                gamesArr = JSON.parse(resp);
+                gamesArr.length = 480;
+
+                buildQualGames(gamesArr);
+            }
+        }
+    };
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+    // catch array from ajax
+    // call function to build table showing all 480 available games - display team name and players
+}
+
+function buildQualGames(games) {
+    let result = [];
+    let t = 0, p = 0;
+    let teams = JSON.parse(globalTeams);
+    let players = JSON.parse(globalPlayers);
+//    console.log(games);
+//    console.log(teams);
+//    console.log(players);
+
+    for (let g = 0, max = games.length; g < max; g++) {
+        if (g !== 0 && g % 8 === 0) {
+
+            t++;
+        }
+        if (g !== 0 && g % 2 === 0) {
+
+            p++;
+        }
+        let team = teams[t], game = games[g], player = players[p];
+
+//        console.log(player);
+//        console.log(match);
+//        console.log(team);
+
+        let obj = {
+            gameID: game.gameID,
+            teamName: team.teamName,
+            playerName: player.firstName + " " + player.lastName,
+            playerID: player.playerID,
+            status: game.gameStatusID
+        };
+
+        result.push(obj);
+    }
+
+    displayAvailableGames(result);
+
+
+
+}
+
+function displayAvailableGames(arr) {
+    resetPage();
+
+    document.querySelector("#availGamesTable").classList.remove("hidden");
+
+    // The table
+    let theTable = document.querySelector("#availGamesTable");
+    let html = theTable.querySelector("tr").innerHTML;
+
+    html += "<div>";
+    for (let i = 0; i < arr.length; i++) {
+        let row = arr[i];
+        html += "<tr>";
+        html += "<td>" + row.gameID + "</td>";
+        html += "<td>" + row.playerID + "</td>";
+        html += "<td>" + row.teamName + "</td>";
+        html += "<td>" + row.playerName + "</td>";
+        html += "<td>" + row.status + "</td>";
+        html += "<td><button class=scoreGame>Score Game</button></td>";
+        html += "</tr>";
+    }
+    html += "</div>";
+    theTable.innerHTML = html;
+    // End of the table
+
+    // get gameID when button clicked
+
+    // Eventlisteners for cancel/done buttons
+    let scoreBtns = document.querySelectorAll(".scoreGame");
+    for (var i = 0; i < scoreBtns.length; i++) {
+        scoreBtns[i].addEventListener("click", displayScorer);
+    }
+
+}
+
+function displayScorer(e) {
+//    resetPage();
+    document.querySelector("#score").classList.remove("hidden");
+    let id = (e.target.parentElement.parentElement.cells[0].innerHTML);
+    let content = document.querySelector("#score");
+    let html = "";
+    html += "GameID: " + id;
+    html += "<br><input id=scoreInput><br><button class=scoreSubmit>Submit</button>";
+    content.innerHTML = html;
+
+    // Eventlisteners for submit button
+    let submitScoreBtn = document.querySelector(".scoreSubmit");
+    submitScoreBtn.addEventListener("click", function () {
+        scoreGame(id);
+    });
+}
+
+function scoreGame(gameID, inScore) {
+
+    let score = inScore;
+    if (score === undefined) {
+        score = document.querySelector("#scoreInput").value;
+    }
+
+    // ajax put
+//    for (let i = 1; i <= 480; i++) {
+//        let score = Math.floor(Math.random() * 300);
+
+    url = "BowlingGameService/games/" + gameID;
+    let obj = {
+        gameID: gameID,
+        matchID: 0,
+        gameNumber: 0,
+        gameStatusID: "",
+        score: score,
+        balls: ""
+    };
+
+    var method = "PUT";
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+            var resp = xmlhttp.responseText;
+            if (resp.search("ERROR") >= 0 || resp != 1) {
+//                    alert("Game NOT updated");
+                console.log(resp);
+            } else {
+//                    alert('Game updated');
+                console.log(resp);
+            }
+        }
+    };
+    xmlhttp.open(method, url, true);
+    xmlhttp.send(JSON.stringify(obj));
+//    }
+
+}
+
+function autoGenerateQualRounds() {
+    for (let i = 1; i <= 480; i++) {
+        let score = Math.floor(Math.random() * 300);
+        scoreGame(i, score);
     }
 }
 

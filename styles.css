@@ -317,7 +317,7 @@ h4 {
     font-size: 25px;
 }
 
-@media only screen and (max-width: 1200px) {
+/*@media only screen and (max-width: 1200px) {
     table {
         margin-top: 50px;
         float: left;
@@ -328,7 +328,7 @@ h4 {
     body {
         background-color: aqua;
     }
-}
+}*/
 
 .right {
     text-align: right;

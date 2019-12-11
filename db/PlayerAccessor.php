@@ -1,21 +1,6 @@
 <?php
 
-// $projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/ja/bowlingTournament';
-// require_once 'ConnectionManager.php';
-// require_once ($projectRoot . '/entity/Player.php');
-
-// class PlayerAccessor {
-
-//     private $getByIDStatementString = "select * from player where playerID = :playerID";
-//     private $deleteStatementString = "delete from player where playerID = :playerID";
-//     private $insertStatementString = "insert into player values (:playerID, :teamID, :firstName, :lastName, :hometown, :province)";
-//     private $updateStatementString = "update player set playerID = :playerID, teamID = :teamID, firstName = :firstName, lastName = :lastName, hometown = :hometown, province = :province where playerID = :playerID";
-
-
-$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/shawnmcc/BowlingTournament1'; // should have a 1?
-//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/barrie/BowlingTournament';
-//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/jarrett/BowlingTournament';
-//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/connor/BowlingTournament';
+$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/shawnmcc/BowlingTournament1';
 
 require_once 'ConnectionManager.php';
 require_once ($projectRoot . '/entity/Player.php');

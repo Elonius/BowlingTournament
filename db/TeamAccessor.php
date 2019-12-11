@@ -16,7 +16,7 @@ require_once ($projectRoot . '/utils/ChromePhp.php');
 
 //require_once ($projectRoot . '/api/bownlingTeamService.php');
 
-class MatchAccessor {
+class GameAccessor {
 
     private $getByIDStatementString = "select * from team where teamID = :teamID";
     private $deleteStatementString = "delete from team where teamID = :teamID";

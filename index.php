@@ -28,7 +28,9 @@
                     <button id="adminGetTeams">View Teams</button><br>
                     <button id="adminGetPlayers">View Players</button><br>
                     <button id="adminGenerateMatchups">Generate RAND Matchups</button><br>
-                    <button id="adminGenerateQualRounds">Generate QUAL Rounds</button><br>
+                    <button id="adminAdvanceQual">Advance QUAL Round</button><br>
+                    <!--<button id="adminGenerateQualRounds">Generate QUAL Rounds</button><br>-->
+                    <!--<button id="adminViewQualGames">View Qual Games</button><br>-->
                 </div>
             </div>
 
@@ -110,14 +112,14 @@
                 <!-- Player table -->
                 <table id="playerTable">
                     <tr>
-                        <th>ID</th>
+<!--                        <th>ID</th>
                         <th>Team ID</th>
                         <th>First Name</th>
                         <th>Last Name</th>
                         <th>Hometown</th>
-                        <th>Province</th>
-                        <th>Edit</th>
-                        <th>Delete</th>
+                        <th>Province</th>-->
+<!--                        <th>Edit</th>
+                        <th>Delete</th>-->
                     </tr>
                 </table>                          
 
@@ -133,9 +135,36 @@
             </div> <!-- End of tables -->
 
             <!-- MatchUp Divs -->
-            <div id="matchups">
-                <!-- Insert matchup divs here -->
+            <div>
+                <table id="matchups">
+                    <tr>
+                        <th>Ranking</th>
+                        <th>Match ID</th>
+                        <th>Round ID</th>
+                        <th>Match Group</th>
+                        <th>Team Name</th>
+                        <th>Score</th>
+                    </tr>
+                </table> 
             </div>
+
+            <div>
+                <table id="availGamesTable">
+                    <tr>
+                        <th>Game ID</th>
+                        <th>Player ID</th>
+                        <th>Team Name</th>
+                        <th>Player Name</th>
+                        <th>Game Status</th>
+                        <th>Score</th>
+                    </tr>
+                </table> 
+            </div>
+
+            <div id="score">
+
+            </div>
+
         </div>
 
     </body>

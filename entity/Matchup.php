@@ -1,6 +1,6 @@
 <?php
 
-class Matchup implements JsonSerializable {
+class Game implements JsonSerializable {
     private $matchID;
     private $roundID;
     private $matchGroup;

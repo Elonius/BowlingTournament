@@ -15,6 +15,9 @@ RewriteRule ^BowlingPlayerService/delTeam/([0-9]+)$ api/bowlingTeamService.php?t
 RewriteRule ^BowlingMatchService/matches$ api/bowlingMatchService.php [NC]
 RewriteRule ^BowlingMatchService/matches/([0-9]+)$ api/bowlingMatchService.php?matchID=$1 [NC]
 
+RewriteRule ^BowlingGameService/games$ api/bowlingGameService.php [NC]
+RewriteRule ^BowlingGameService/games/([0-9]+)$ api/bowlingGameService.php?gameID=$1 [NC]
+
 
 #RewriteRule ^BowlingTournament/teams$ api/bowlingTeamService.php [NC]
 #RewriteRule ^BowlingTournament/players$ api/bowlingPlayerService.php [NC]

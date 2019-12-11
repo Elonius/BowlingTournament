@@ -1,19 +1,25 @@
 <?php
-$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/ja/bowlingTournament';
+
+$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/shawnmcc/BowlingTournament1';
+
 require_once 'ConnectionManager.php';
 require_once ($projectRoot . '/entity/Game.php');
+require_once ($projectRoot . '/utils/ChromePhp.php');
 
-class MatchAccessor {
+class GameAccessor {
 
     private $getByIDStatementString = "select * from game where gameID = :gameID";
     private $deleteStatementString = "delete from game where gameID = :gameID";
     private $insertStatementString = "insert into game values (:gameID, :matchID, :gameNumber, :gameStatusID, :score, :balls)";
     private $updateStatementString = "update game set gameID = :gameID, matchID = :matchID, gameNumber = :gameNumber, gameStatusID = :gameStatusID, score = :score, balls = :balls where gameID = :gameID";
+//    private $updateScoreStatementString = "update game set score = :score, balls = :balls where gameID = :gameID";
+    private $updateScoreStatementString = "update game set score = :score where gameID = :gameID";
     private $conn = NULL;
     private $getByIDStatement = NULL;
     private $deleteStatement = NULL;
     private $insertStatement = NULL;
     private $updateStatement = NULL;
+    private $updateScoreStatement = NULL;
 
     // Constructor will throw exception if there is a problem with ConnectionManager,
     // or with the prepared statements.
@@ -43,6 +49,11 @@ class MatchAccessor {
         if (is_null($this->updateStatement)) {
             throw new Exception("bad statement: '" . $this->updateStatementString . "'");
         }
+
+        $this->updateScoreStatement = $this->conn->prepare($this->updateScoreStatementString);
+        if (is_null($this->updateScoreStatement)) {
+            throw new Exception("bad statement: '" . $this->updateScoreStatementString . "'");
+        }
     }
 
     /**
@@ -70,11 +81,9 @@ class MatchAccessor {
                 $obj = new Game($gameID, $matchID, $gameNumber, $gameStatusID, $score, $balls);
                 array_push($result, $obj);
             }
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $result = [];
-        }
-        finally {
+        } finally {
             if (!is_null($stmt)) {
                 $stmt->closeCursor();
             }
@@ -106,20 +115,18 @@ class MatchAccessor {
             $this->getByIDStatement->execute();
             $dbresults = $this->getByIDStatement->fetch(PDO::FETCH_ASSOC); // not fetchAll
 
-            if ($dbresults) { $gameID = $r['gameID'];
+            if ($dbresults) {
+                $gameID = $r['gameID'];
                 $matchID = $r['matchID'];
                 $gameNumber = $r['gameNumber'];
                 $gameStatusID = $r['gameStatusID'];
                 $score = $r['score'];
                 $balls = $r['balls'];
                 $obj = new Game($gameID, $matchID, $gameNumber, $gameStatusID, $score, $balls);
-                
             }
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $result = NULL;
-        }
-        finally {
+        } finally {
             if (!is_null($this->getByIDStatement)) {
                 $this->getByIDStatement->closeCursor();
             }
@@ -141,11 +148,9 @@ class MatchAccessor {
         try {
             $this->deleteStatement->bindParam(":gameID", $gameID);
             $success = $this->deleteStatement->execute();
-        }
-        catch (PDOException $e) {
+        } catch (PDOException $e) {
             $success = false;
-        }
-        finally {
+        } finally {
             if (!is_null($this->deleteStatement)) {
                 $this->deleteStatement->closeCursor();
             }
@@ -177,11 +182,9 @@ class MatchAccessor {
             $this->insertStatement->bindParam(":score", $score);
             $this->insertStatement->bindParam(":balls", $balls);
             $success = $this->insertStatement->execute();
-        }
-        catch (PDOException $e) {
+        } catch (PDOException $e) {
             $success = false;
-        }
-        finally {
+        } finally {
             if (!is_null($this->insertStatement)) {
                 $this->insertStatement->closeCursor();
             }
@@ -213,13 +216,11 @@ class MatchAccessor {
             $this->updateStatement->bindParam(":gameStatusID", $gameStatusID);
             $this->updateStatement->bindParam(":score", $score);
             $this->updateStatement->bindParam(":balls", $balls);
-            
+
             $success = $this->updateStatement->execute();
-        }
-        catch (PDOException $e) {
+        } catch (PDOException $e) {
             $success = false;
-        }
-        finally {
+        } finally {
             if (!is_null($this->updateStatement)) {
                 $this->updateStatement->closeCursor();
             }
@@ -227,5 +228,33 @@ class MatchAccessor {
         }
     }
 
+    public function updateScore($item) {
+        ChromePhp::log($item);
+
+
+        $success;
+        $gameID = $item->getGameID();
+        $matchID = $item->getMatchID();
+        $gameNumber = $item->getGameNumber();
+        $gameStatusID = $item->getGameStatusID();
+        $score = $item->getScore();
+        $balls = $item->getBalls();
+
+        $obj = new Game($gameID, $matchID, $gameNumber, $gameStatusID, $score, $balls);
+
+        try {
+            $this->updateScoreStatement->bindParam(":gameID", $gameID);
+            $this->updateScoreStatement->bindParam(":score", $score);
+
+            $success = $this->updateScoreStatement->execute();
+        } catch (PDOException $e) {
+            $success = false;
+        } finally {
+            if (!is_null($this->updateScoreStatement)) {
+                $this->updateScoreStatement->closeCursor();
+            }
+            return $success;
+        }
+    }
+
 }
-// end class MenuItemAccessor
