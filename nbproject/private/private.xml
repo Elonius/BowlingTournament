@@ -1,19 +1,15 @@
-
-<!-- <?xml version="1.0" encoding="UTF-8"?>
-<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
-    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
-    </open-files>
-</project-private> -->
-
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/0-ITPA_YR2/Term1/PHP/Labs/FinalProj/BowlingTournament/index.php</file>
-            <file>file:/C:/0-ITPA_YR2/Term1/PHP/Labs/FinalProj/BowlingTournament/main.js</file>
+            <file>file:/C:/Users/shawn/Downloads/BowlingTournament-master/BowlingTournament-master/db/MatchAccessor.php</file>
+            <file>file:/C:/Users/shawn/Downloads/BowlingTournament-master/BowlingTournament-master/index.php</file>
+            <file>file:/C:/Users/shawn/Downloads/BowlingTournament-master/BowlingTournament-master/entity/Matchup.php</file>
+            <file>file:/C:/Users/shawn/Downloads/BowlingTournament-master/BowlingTournament-master/api/bowlingMatchService.php</file>
+            <file>file:/C:/Users/shawn/Downloads/BowlingTournament-master/BowlingTournament-master/main.js</file>
+            <file>file:/C:/Users/shawn/Downloads/BowlingTournament-master/BowlingTournament-master/db/PlayerAccessor.php</file>
+            <file>file:/C:/Users/shawn/Downloads/BowlingTournament-master/BowlingTournament-master/api/bowlingPlayerService.php</file>
         </group>
     </open-files>
 </project-private>

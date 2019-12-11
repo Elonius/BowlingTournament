@@ -3,7 +3,7 @@ $projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/ja/bowlingTournam
 require_once 'ConnectionManager.php';
 require_once ($projectRoot . '/entity/Game.php');
 
-class TeamAccessor {
+class MatchAccessor {
 
     private $getByIDStatementString = "select * from game where gameID = :gameID";
     private $deleteStatementString = "delete from game where gameID = :gameID";

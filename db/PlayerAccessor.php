@@ -12,7 +12,7 @@
 //     private $updateStatementString = "update player set playerID = :playerID, teamID = :teamID, firstName = :firstName, lastName = :lastName, hometown = :hometown, province = :province where playerID = :playerID";
 
 
-$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/shawnmcc/BowlingTournament';
+$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/shawnmcc/BowlingTournament1'; // should have a 1?
 //$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/barrie/BowlingTournament';
 //$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/jarrett/BowlingTournament';
 //$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/connor/BowlingTournament';
@@ -26,7 +26,7 @@ class PlayerAccessor {
     private $getByIDStatementString = "select * from player where teamID = :teamID";
     private $deleteStatementString = "delete from player where playerID = :playerID";
     private $insertStatementString = "insert into player values (:playerID, :teamID, :firstName, :lastName, :hometown, :province)";
-    private $updateStatementString = "update player set playerID = :playerID, teamID = :teamID, firstName = :firstName, lastName = :lastName, hometown - :hometown, province = :province where playerID = :playerID";
+    private $updateStatementString = "update player set playerID = :playerID, teamID = :teamID, firstName = :firstName, lastName = :lastName, hometown = :hometown, province = :province where playerID = :playerID";
 
     private $conn = NULL;
     private $getByIDStatement = NULL;
@@ -228,7 +228,7 @@ class PlayerAccessor {
      */
     public function updateItem($item) {
         $success;
-
+        
         $playerID = $item->getPlayerID();
         $teamID = $item->getTeamID();
         $firstName = $item->getFirstName();
@@ -244,7 +244,6 @@ class PlayerAccessor {
             $this->updateStatement->bindParam(":hometown", $hometown);
             $this->updateStatement->bindParam(":province", $province);
             $success = $this->updateStatement->execute();
-
         } catch (PDOException $e) {
             $success = false;
         } finally {

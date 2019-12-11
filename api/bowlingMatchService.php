@@ -5,8 +5,8 @@ $projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/shawnmcc/BowlingT
 //$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/jarrett/BowlingTournament';
 //$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/connor/BowlingTournament';
 
-require_once ($projectRoot . '/db/TeamAccessor.php');
-require_once ($projectRoot . '/entity/Team.php');
+require_once ($projectRoot . '/db/MatchAccessor.php');
+require_once ($projectRoot . '/entity/Matchup.php');
 require_once ($projectRoot . '/utils/ChromePhp.php');
 
 $method = filter_input(INPUT_SERVER, 'REQUEST_METHOD'); // $_SERVER['REQUEST_METHOD']
@@ -22,10 +22,11 @@ if ($method === "GET") {
 }
 
 function doGet() {
-    if (!filter_has_var(INPUT_GET, 'teamID')) {
+    if (!filter_has_var(INPUT_GET, 'matchID')) {
         try {
-            $ta = new MatchAccessor();
-            $results = $ta->getAllItems();
+            $ma = new MatchAccessor();
+            $results = $ma->getAllItems();
+//            ChromePhp::log($results);
             $results = json_encode($results, JSON_NUMERIC_CHECK);
 
             echo $results;
@@ -33,22 +34,23 @@ function doGet() {
             echo "ERROR " . $e->getMessage();
         }
     } else {
-        ChromePhp::log("You are requesting item " . filter_input(INPUT_GET, 'teamID'));
+        ChromePhp::log("You are requesting item " . filter_input(INPUT_GET, 'matchID'));
     }
 }
 
 function doDelete() {
-    if (!filter_has_var(INPUT_GET, 'teamID')) {
+    if (!filter_has_var(INPUT_GET, 'matchID')) {
         ChromePhp::log("Sorry, bulk deletes not allowed!");
     } else {
-        $teamID = filter_input(INPUT_GET, 'teamID');
+        $matchID = filter_input(INPUT_GET, 'matchID');
 
-        // create a Team object - only ID matters
-        $teamObj = new Team($teamID, "dummyName", "dummyEarnings");
+        // create a match object - only ID matters
+        $matchObj = new Matchup($matchID, "dummy", 999, 999, 999, 999);
 
         // delete the object from DB
-        $ta = new MatchAccessor();
-        $success = $ta->deleteItem($teamObj);
+        $ma = new MatchAccessor();
+
+        $success = $ma->deleteItem($matchObj);
 
         echo $success;
     }
@@ -60,12 +62,12 @@ function doPost() {
     $body = file_get_contents('php://input');
     $contents = json_decode($body, true);
 
-    // create a Team object
-    $teamObj = new Team($contents['teamID'], $contents['teamName'], $contents['earnings']);
+    // create a match object
+    $matchObj = new Matchup($contents['matchID'], $contents['roundID'], $contents['matchGroup'], $contents['teamID'], $contents['score'], $contents['ranking']);
 
     // add the object to DB
-    $ta = new MatchAccessor();
-    $success = $ta->insertItem($teamObj); // *******
+    $ma = new MatchAccessor();
+    $success = $ma->insertItem($matchObj); // *******
     echo $success;
 }
 
@@ -74,10 +76,12 @@ function doPut() {
     // reading the HTTP request body
     $body = file_get_contents('php://input');
     $contents = json_decode($body, true);
-    // create a Team object
-    $teamObj = new Team($contents['teamID'], $contents['teamName'], $contents['earnings']);
+//    ChromePhp::log("IN PUT: ");
+//    ChromePhp::log(json_encode($contents));
+    // create a match object
+    $matchObj = new Matchup($contents['matchID'], $contents['roundID'], $contents['matchGroup'], $contents['teamID'], $contents['score'], $contents['ranking']);
     // update the object in the  DB
-    $ta = new MatchAccessor();
-    $success = $ta->updateItem($teamObj); // *******
+    $ma = new MatchAccessor();
+    $success = $ma->updateItem($matchObj); // *******
     echo $success;
 }

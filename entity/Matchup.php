@@ -21,7 +21,7 @@ class Matchup implements JsonSerializable {
         return $this->matchID;
     }
     
-    public function getGameID() {
+    public function getRoundID() {
         return $this->roundID;
     }
 

@@ -1,14 +1,16 @@
 <?php
-$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/ja/bowlingTournament';
+
+$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/shawnmcc/BowlingTournament1';
+
 require_once 'ConnectionManager.php';
-require_once ($projectRoot . '/entity/Match.php');
+require_once ($projectRoot . '/entity/Matchup.php');
 
-class TeamAccessor {
+class MatchAccessor {
 
-    private $getByIDStatementString = "select * from match where matchID = :matchID";
-    private $deleteStatementString = "delete from match where matchID = :matchID";
-    private $insertStatementString = "insert into match values (:matchID, :roundID, :matchgroup, :teamID, :score, :ranking)";
-    private $updateStatementString = "update match set matchID = :matchID, roundID = :roundID, matchgroup = :matchgroup, teamID = :teamID, score = :score, ranking = :ranking where matchID = :matchID";
+    private $getByIDStatementString = "select * from matchup where matchID = :matchID";
+    private $deleteStatementString = "delete from matchup where matchID = :matchID";
+    private $insertStatementString = "insert into matchup values (:matchID, :roundID, :matchgroup, :teamID, :score, :ranking)";
+    private $updateStatementString = "update matchup set matchID = :matchID, roundID = :roundID, matchgroup = :matchgroup, teamID = :teamID, score = :score, ranking = :ranking where matchID = :matchID";
     private $conn = NULL;
     private $getByIDStatement = NULL;
     private $deleteStatement = NULL;
@@ -67,19 +69,17 @@ class TeamAccessor {
                 $teamID = $r['teamID'];
                 $score = $r['score'];
                 $ranking = $r['ranking'];
-                $obj = new Match($matchID, $roundID, $matchgroup, $teamID, $score, $ranking);
+                $obj = new Matchup($matchID, $roundID, $matchgroup, $teamID, $score, $ranking);
                 array_push($result, $obj);
             }
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $result = [];
-        }
-        finally {
+        } finally {
             if (!is_null($stmt)) {
                 $stmt->closeCursor();
             }
         }
-
+//        ChromePhp::log($result);
         return $result;
     }
 
@@ -89,7 +89,7 @@ class TeamAccessor {
      * @return array MenuItem objects, possibly empty
      */
     public function getAllItems() {
-        return $this->getItemsByQuery("select * from match");
+        return $this->getItemsByQuery("select * from matchup");
     }
 
     /**
@@ -115,13 +115,10 @@ class TeamAccessor {
                 $score = $r['score'];
                 $ranking = $r['ranking'];
                 $result = new Matchup($matchID, $roundID, $matchgroup, $teamID, $score, $ranking);
-                
             }
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             $result = NULL;
-        }
-        finally {
+        } finally {
             if (!is_null($this->getByIDStatement)) {
                 $this->getByIDStatement->closeCursor();
             }
@@ -143,11 +140,9 @@ class TeamAccessor {
         try {
             $this->deleteStatement->bindParam(":matchID", $matchID);
             $success = $this->deleteStatement->execute();
-        }
-        catch (PDOException $e) {
+        } catch (PDOException $e) {
             $success = false;
-        }
-        finally {
+        } finally {
             if (!is_null($this->deleteStatement)) {
                 $this->deleteStatement->closeCursor();
             }
@@ -179,11 +174,9 @@ class TeamAccessor {
             $this->insertStatement->bindParam(":score", $score);
             $this->insertStatement->bindParam(":ranking", $ranking);
             $success = $this->insertStatement->execute();
-        }
-        catch (PDOException $e) {
+        } catch (PDOException $e) {
             $success = false;
-        }
-        finally {
+        } finally {
             if (!is_null($this->insertStatement)) {
                 $this->insertStatement->closeCursor();
             }
@@ -214,13 +207,11 @@ class TeamAccessor {
             $this->updateStatement->bindParam(":teamID", $teamID);
             $this->updateStatement->bindParam(":score", $score);
             $this->updateStatement->bindParam(":ranking", $ranking);
-            
+
             $success = $this->updateStatement->execute();
-        }
-        catch (PDOException $e) {
+        } catch (PDOException $e) {
             $success = false;
-        }
-        finally {
+        } finally {
             if (!is_null($this->updateStatement)) {
                 $this->updateStatement->closeCursor();
             }
@@ -229,4 +220,5 @@ class TeamAccessor {
     }
 
 }
+
 // end class MatchAccessor

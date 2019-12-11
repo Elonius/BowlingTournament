@@ -1,4 +1,4 @@
-body {
+/*body {
     font-size: 1.2em;
     margin: 0;
 }
@@ -42,7 +42,11 @@ tr:nth-child(odd) {
     display: none;
 }
 
-/*for add/update panel*/
+.center {
+    text-align: center;
+}
+
+for add/update panel
 .formLabel {
     width: 100px;
     float: left;
@@ -56,9 +60,9 @@ button {
     padding: 10px;
 }
 
-/*#tableDiv {
+#tableDiv {
     margin: 0 auto;
-}*/
+}
 
 .flex-container {
     padding: 0;
@@ -68,7 +72,7 @@ button {
     display: -ms-flexbox;
     display: -webkit-flex;
     display: flex;
-    /*-webkit-flex-flow: row wrap;*/
+    -webkit-flex-flow: row wrap;
     justify-content: space-around;
 }
 
@@ -86,9 +90,9 @@ button {
 
 .divButtons {
     text-align: center;
+}
 
-
-/*#public {
+#public {
     float: left;
     border: black thin solid;
     width: 300px;
@@ -98,8 +102,234 @@ button {
     float: left;
     border: black thin solid;
     width: 300px;
+}
+
+.divButtons {
+    margin: 0 auto;
+}
+
+.matchupBox {
+    margin: 20px auto;
+    border: solid thin black;
+    width: 400px;
+}*/
+
+body {
+    font-size: 1.2em;
+    margin: 0;
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+h4 {
+    padding-bottom: 15px;
+    margin: 0;
+    text-align: center;
+}
+
+table {
+    margin-top: 50px;
+    float: left;
+    /*            margin: auto;*/
+}
+
+table,
+td,
+th {
+    border: solid thin gray;
+    border-collapse: collapse;
+}
+
+td,
+th {
+    padding: 10px;
+}
+
+th {
+    background-color: #446688;
+    color: white;
+    font-size: 25px;
+    height: 50px;
+}
+
+tr:nth-child(odd) {
+    background-color: gainsboro;
+}
+
+#playerTable {
+    margin-left: 10px;
+    float: left;
+}
+
+
+#AddUpdateTeamPanel,
+#AddUpdatePlayerPanel {
+    background-color: #ff934b;
+    padding: 20px;
+    width: fit-content;
+    float: left;
+    border-style: solid;
+    margin-left: 60px;
+
+}
+
+.hidden {
+    display: none;
+}
+
+.center {
+    text-align: center;
+}
+
+/*for add/update panel*/
+.formLabel {
+    width: 100px;
+    float: left;
+}
+
+tr:hover {
+    background-color: lightblue;
+}
+
+button {
+    border: none;
+    background: #404040;
+    color: #ffffff !important;
+    font-weight: 100;
+    padding: 20px;
+    text-transform: uppercase;
+    border-radius: 6px;
+    display: inline-block;
+    transition: all 0.3s ease 0s;
+    margin: 5px;
+}
+
+
+button:hover {
+    color: #404040 !important;
+    font-weight: 700 !important;
+    /*background: none;*/
+    background: lightgrey;
+    /*    -webkit-box-shadow: 0px 5px 40px -10px rgba(0, 0, 0, 0.57);
+        -moz-box-shadow: 0px 5px 40px -10px rgba(0, 0, 0, 0.57);*/
+    transition: all 0.3s ease 0s;
+}
+
+.deleteTeam:hover {
+    background-color: red;
+}
+.editTeam:hover {
+    background-color: lightgreen;
+    color: black;
+}
+.viewPlayers:hover {
+    background-color: lightgreen;
+}
+
+#admin button {
+    padding: 16px;
+}
+
+.CancelButton:hover {
+    background-color: red;
+}
+
+.PlayerDoneButton:hover {
+    background-color: lightgreen;
+}
+
+
+/*#tableDiv {
+margin: 0 auto;
+}*/
+
+.flex-container {
+    padding: 0;
+    margin: 0;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    /*-webkit-flex-flow: row wrap;*/
+    justify-content: space-around;
+
+}
+
+.flex-item {
+    background: #336688;
+    border-style: solid;
+    border-color: black;
+    padding: 5px;
+    width: 350px;
+    height: 350px;
+    margin-top: 10px;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+}
+
+
+.divButtons {
+    text-align: center;
+}
+
+/*#public {
+float: left;
+border: black thin solid;
+width: 300px;
+}
+
+#admin {
+float: left;
+border: black thin solid;
+width: 300px;
 }*/
 
 .divButtons {
     margin: 0 auto;
+}
+
+.matchupBox {
+    margin: 20px auto;
+    border: solid thin black;
+    width: 400px;
+}
+
+#tableDiv {
+    clear: both;
+}
+
+body{
+    background-color: lightcyan;
+}
+
+#AddUpdatePlayerPanel,
+#AddUpdateTeamPanel {
+    background-color: #336688;
+    border: solid black;
+    color: white;
+    font-weight: 300;
+    margin-top: 20px;
+}
+
+h4 {
+    font-size: 25px;
+}
+
+@media only screen and (max-width: 1200px) {
+    table {
+        margin-top: 50px;
+        float: left;
+        clear: both;
+        margin: auto;
+    }
+
+    body {
+        background-color: aqua;
+    }
+}
+
+.right {
+    text-align: right;
 }
