@@ -6,6 +6,8 @@ let tick = 0;
 let matchupsArr;
 let globalTeams;
 let globalPlayers;
+//----
+let frameTotal = 0, ball = 0, scoreArray = [], maxBalls = 1;
 
 const SPARE_CHAR = "/";
 const STRIKE_CHAR = "X";
@@ -28,6 +30,9 @@ window.onload = function () {
     document.querySelector("#adminAdvanceQual").addEventListener("click", autoGenerateQualRounds);
 //    document.querySelector("#adminGenerateQualRounds").addEventListener("click", generateQualRounds);
 //    document.querySelector("#adminViewQualGames").addEventListener("click", generateQualGames);
+
+    let teamDoneBtns = document.querySelector(".TeamDoneButton").addEventListener("click", addTeamOrPlayer);
+    let playerDoneBtns = document.querySelector(".PlayerDoneButton").addEventListener("click", addTeamOrPlayer);
 
     resetPage();
 };
@@ -339,7 +344,6 @@ function buildPlayerTable(text) {
 }
 
 function updatePlayer() {
-//    debugger;
     //get data from text boxes
     playerID = document.querySelector("#playerIDInput").value;
     teamID = document.querySelector("#teamIDInput").value;
@@ -505,6 +509,7 @@ function addOrUpdatePlayer(addOrUpdate, e) {
     let playerID, teamID, firstName, lastName, hometown, province;
     let url;
 
+
     if (addOrUpdate === "add") {
 
         playerID = document.querySelector("#playerIDInput").value;
@@ -529,10 +534,10 @@ function addOrUpdatePlayer(addOrUpdate, e) {
             if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
                 var resp = xmlhttp.responseText;
                 if (resp.search("ERROR") >= 0 || resp != 1) {
-                    alert("Team NOT added");
+                    alert("Added");
                     console.log(resp);
                 } else {
-                    alert('Team added');
+                    alert('Added');
                     adminGetTeams();
                 }
             }
