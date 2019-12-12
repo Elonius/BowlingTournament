@@ -10,16 +10,16 @@ let globalPlayers;
 
 
 // Bracket
-    //collection of first round matchups <li> tags
-    let firstRound = document.querySelectorAll(".firstRound");
-    //collection of second round matchups <li> tagsRound");
-    let secondRound = document.querySelectorAll(".secondRound");
-    //collection of third round matchups <li> tags
-    let thirdRound = document.querySelectorAll(".thirdRound");
-    //collection of fourth round matchups <li> tags
-    let fourthRound = document.querySelectorAll(".fourthRound");
-    //collection of fifth round matchups <li> tags
-   let  fifthRound = document.querySelectorAll(".fifthRound");
+//collection of first round matchups <li> tags
+let firstRound = document.querySelectorAll(".firstRound");
+//collection of second round matchups <li> tagsRound");
+let secondRound = document.querySelectorAll(".secondRound");
+//collection of third round matchups <li> tags
+let thirdRound = document.querySelectorAll(".thirdRound");
+//collection of fourth round matchups <li> tags
+let fourthRound = document.querySelectorAll(".fourthRound");
+//collection of fifth round matchups <li> tags
+let  fifthRound = document.querySelectorAll(".fifthRound");
 // Bracket
 
 
@@ -56,6 +56,7 @@ window.onload = function () {
     document.querySelector("#viewMatchups").addEventListener("click", generateQualGames);
     document.querySelector("#adminAdvanceQual").addEventListener("click", autoGenerateQualRounds);
     document.querySelector("#adminSEED1").addEventListener("click", generateSeed1);
+    document.querySelector("#adminSEED2").addEventListener("click", advanceRound2);
 //    document.querySelector("#adminGenerateQualRounds").addEventListener("click", generateQualRounds);
 //    document.querySelector("#adminViewQualGames").addEventListener("click", generateQualGames);
 
@@ -587,7 +588,6 @@ function addOrUpdateTeam(addOrUpdate) {
     let teamName;
     let earnings;
 
-
     if (addOrUpdate === "add") {
         teamID = document.querySelector("#addUpdateTeamID").value;
         teamName = document.querySelector("#addUpdateTeamName").value;
@@ -605,6 +605,7 @@ function addOrUpdateTeam(addOrUpdate) {
     };
 
     var url = "bowlingTeamService/team/" + obj.teamID;
+
     var method = (addOrUpdate === "add") ? "POST" : "PUT";
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function () {
@@ -1155,6 +1156,8 @@ function autoGenerateQualRounds() {
     }
 
     document.querySelector("#adminSEED1").disabled = false;
+
+    addOrUpdateTeam("update");
 }
 
 function generateSeed1() {
@@ -1163,7 +1166,6 @@ function generateSeed1() {
     let j = length;
     let matchupArr = [];
     let teamArr = JSON.parse(globalTeams);
-
 
     for (let i = 0; i < length / 2; i++) { // length/2
         let teamOne = topSixteen[i];
@@ -1178,22 +1180,19 @@ function generateSeed1() {
             }
         }
 
-
-
         j--;
     }
 
-
     createSeededMatchups(matchupArr);
 
-
+    document.querySelector("#adminSEED2").disabled = false;
 }
 
 
 function createSeededMatchups(seededArray) {
-    debugger;
+    console.log(seededArray);
     populateFirstRound(seededArray);
-    
+
     // $matchID, $roundID, $matchGroup, $teamID, $score, $ranking
     let matchID = 61;
     let roundID = "SEED1";
@@ -1252,8 +1251,8 @@ function ajaxMOA(obj) {
 function displayBracket() {
     resetPage();
     document.querySelector("#tournamentBracket").classList.remove("hidden");
-    
-    populateFirstRound();
+
+//    populateFirstRound();
 }
 
 // Bracket JS
@@ -1302,6 +1301,19 @@ function populateFifthRound(teams) {
 
     }
 }
+
+function advanceRound2() {
+// take global array 'matchupsArr'
+// each team bowls 3 games ( 3 games per player )
+// loop each team and score 
+
+}
+
+
+
+
+
+
 
 /**
  * Randomly shuffle an array

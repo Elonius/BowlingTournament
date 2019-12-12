@@ -24,7 +24,7 @@ if ($method === "GET") {
 function doGet() {
     if (!filter_has_var(INPUT_GET, 'teamID')) {
         try {
-            $ta = new GameAccessor();
+            $ta = new TeamAccessor();
             $results = $ta->getAllItems();
             $results = json_encode($results, JSON_NUMERIC_CHECK);
 
@@ -47,7 +47,7 @@ function doDelete() {
         $teamObj = new Team($teamID, "dummyName", "dummyEarnings");
 
         // delete the object from DB
-        $ta = new GameAccessor();
+        $ta = new TeamAccessor();
         $success = $ta->deleteItem($teamObj);
 
         echo $success;
@@ -64,7 +64,7 @@ function doPost() {
     $teamObj = new Team($contents['teamID'], $contents['teamName'], $contents['earnings']);
 
     // add the object to DB
-    $ta = new GameAccessor();
+    $ta = new TeamAccessor();
     $success = $ta->insertItem($teamObj); // *******
     echo $success;
 }
@@ -77,7 +77,7 @@ function doPut() {
     // create a Team object
     $teamObj = new Team($contents['teamID'], $contents['teamName'], $contents['earnings']);
     // update the object in the  DB
-    $ta = new GameAccessor();
+    $ta = new TeamAccessor();
     $success = $ta->updateItem($teamObj); // *******
     echo $success;
 }

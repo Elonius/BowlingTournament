@@ -31,6 +31,7 @@
                     <!--<button id="adminGenerateMatchups">Generate RAND Matchups</button><br>-->
                     <button id="adminAdvanceQual">Generate Top 16</button><br>
                     <button id="adminSEED1" disabled>Generate SEED1</button><br>
+                    <button id="adminSEED2" disabled>Advance Round 2</button><br>
                     <!--<button id="adminGenerateQualRounds">Generate QUAL Rounds</button><br>-->
                     <!--<button id="adminViewQualGames">View Qual Games</button><br>-->
                 </div>
