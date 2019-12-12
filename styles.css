@@ -1,119 +1,3 @@
-/*body {
-    font-size: 1.2em;
-    margin: 0;
-}
-
-h4 {
-    padding-bottom: 15px;
-    margin: 0;
-    text-align: center;
-}
-
-table {
-    margin-top: 50px;
-}
-
-table, td, th {
-    border: solid thin gray;
-    border-collapse: collapse;
-}
-
-td, th {
-    padding: 10px;
-}
-
-th {
-    background-color: #ff934b;
-    color: #00001d
-}
-
-tr:nth-child(odd) {
-    background-color: gainsboro;
-}
-
-#AddUpdateTeamPanel, #AddUpdatePlayerPanel {
-    background-color: #ff934b;
-    padding: 20px;
-    width: fit-content;
-    float: left;
-}
-
-.hidden {
-    display: none;
-}
-
-.center {
-    text-align: center;
-}
-
-for add/update panel
-.formLabel {
-    width: 100px;
-    float: left;
-}
-
-tr:hover {
-    background-color: #ffff4b;
-}
-
-button {
-    padding: 10px;
-}
-
-#tableDiv {
-    margin: 0 auto;
-}
-
-.flex-container {
-    padding: 0;
-    margin: 0;
-    display: -webkit-box;
-    display: -moz-box;
-    display: -ms-flexbox;
-    display: -webkit-flex;
-    display: flex;
-    -webkit-flex-flow: row wrap;
-    justify-content: space-around;
-}
-
-.flex-item {
-    background: tomato;
-    padding: 5px;
-    width: 300px;
-    height: 250px;
-    margin-top: 10px;
-    color: white;
-    font-weight: bold;
-    text-align: center;
-}
-
-
-.divButtons {
-    text-align: center;
-}
-
-#public {
-    float: left;
-    border: black thin solid;
-    width: 300px;
-}
-
-#admin {
-    float: left;
-    border: black thin solid;
-    width: 300px;
-}
-
-.divButtons {
-    margin: 0 auto;
-}
-
-.matchupBox {
-    margin: 20px auto;
-    border: solid thin black;
-    width: 400px;
-}*/
-
 body {
     font-size: 1.2em;
     margin: 0;
@@ -157,7 +41,7 @@ tr:nth-child(odd) {
 }
 
 #playerTable {
-    margin-left: 10px;
+    /*margin-left: 10px;*/
     float: left;
 }
 
@@ -215,7 +99,7 @@ button:hover {
     transition: all 0.3s ease 0s;
 }
 
-.deleteTeam:hover {
+.deleteTeam:hover, .deletePlayer:hover {
     background-color: red;
 }
 .editTeam:hover {
@@ -274,18 +158,6 @@ margin: 0 auto;
     text-align: center;
 }
 
-/*#public {
-float: left;
-border: black thin solid;
-width: 300px;
-}
-
-#admin {
-float: left;
-border: black thin solid;
-width: 300px;
-}*/
-
 .divButtons {
     margin: 0 auto;
 }
@@ -296,13 +168,9 @@ width: 300px;
     width: 400px;
 }
 
-#tableDiv {
-    clear: both;
-}
-
-body{
+/*body{
     background-color: lightcyan;
-}
+}*/
 
 #AddUpdatePlayerPanel,
 #AddUpdateTeamPanel {
@@ -317,19 +185,105 @@ h4 {
     font-size: 25px;
 }
 
-/*@media only screen and (max-width: 1200px) {
-    table {
-        margin-top: 50px;
-        float: left;
-        clear: both;
-        margin: auto;
-    }
-
-    body {
-        background-color: aqua;
-    }
-}*/
-
 .right {
     text-align: right;
+}
+
+/*Score stuff*/
+#submitScores {
+    width: 100px;
+}
+
+#submitScores:hover {
+    background-color: lightgreen;
+}
+
+#matchTable {
+    width: 650px;
+}
+
+#matchTable td {
+    height: 25px;
+    text-align: center;
+}
+
+#matchTable th {
+    height: 25px;
+}
+
+#scoreForm {
+    border: solid;
+    width: 800px;
+    font-weight: bold;
+    height: 400px;
+    padding: 20px;
+}
+
+button:disabled {
+    background-color: lightgray;
+}
+
+/* Tournament Bracket */
+#first,
+#second,
+#third,
+#fourth,
+#fifth {
+    height: 100%;
+    width: 20%;
+    flex-flow: column;
+    float: left;
+    text-align: center;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    color: white;
+    margin-top: 330px;
+}
+
+#second {
+    margin-left: 15%;
+}
+#second ul{
+    margin-top: 20%;
+    margin-bottom: 20%;
+}
+#third {
+    margin-left: 30%;
+}
+#third ul{
+    margin-top: 50%;
+    margin-bottom: 50%;
+}
+#fourth {
+    margin-left: 45%;
+}
+
+#fifth {
+    margin-left: 60%;
+}
+
+ul {
+    border: solid thin black;
+    width: 60%;
+    padding: 4px;
+    background-color: #446688;
+}
+li{
+    display: block;
+    border-bottom: solid thin black;
+    border-top: solid thin black;
+    border: solid thin black;
+    background-color: #7799BB;
+}
+
+#tournamentBracket {
+    height: 800px;
+    margin-top: 100px;
+    border: thin black solid;
 }

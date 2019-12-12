@@ -4,10 +4,37 @@ let teamOrPlayer = "";
 let teamArray;
 let tick = 0;
 let matchupsArr;
+let topSixteen = [];
 let globalTeams;
 let globalPlayers;
-//----
-let frameTotal = 0, ball = 0, scoreArray = [], maxBalls = 1;
+
+
+// Bracket
+    //collection of first round matchups <li> tags
+    let firstRound = document.querySelectorAll(".firstRound");
+    //collection of second round matchups <li> tagsRound");
+    let secondRound = document.querySelectorAll(".secondRound");
+    //collection of third round matchups <li> tags
+    let thirdRound = document.querySelectorAll(".thirdRound");
+    //collection of fourth round matchups <li> tags
+    let fourthRound = document.querySelectorAll(".fourthRound");
+    //collection of fifth round matchups <li> tags
+   let  fifthRound = document.querySelectorAll(".fifthRound");
+// Bracket
+
+
+//---- For scoreboard
+frame = 0;
+ball = 0;
+frameTotal = 0;
+totalScore = 0;
+//one needed for string
+scoreArr = [];
+//only total of each frame
+totalScores = [];
+//frames that have to be added to previous
+maxBalls = 1;
+//let frameTotal = 0, ball = 0, scoreArray = [], maxBalls = 1;
 
 const SPARE_CHAR = "/";
 const STRIKE_CHAR = "X";
@@ -22,17 +49,30 @@ window.onload = function () {
     document.querySelector("#getStandings").addEventListener("click", guestViewStandings);
     document.querySelector("#adminGetTeams").addEventListener("click", adminGetTeams);
     document.querySelector("#adminGetPlayers").addEventListener("click", adminGetAllPlayers);
-    document.querySelector("#adminGenerateMatchups").addEventListener("click", generateRandomMatchups);
+//    document.querySelector("#adminGenerateMatchups").addEventListener("click", generateRandomMatchups);
     document.querySelector("#btnAddTeam").addEventListener("click", showAddUpdateTeamPanel);
     document.querySelector("#btnAddPlayer").addEventListener("click", showAddUpdatePlayerPanel);
 //    document.querySelector("#viewMatchups").addEventListener("click", viewMatchups);
     document.querySelector("#viewMatchups").addEventListener("click", generateQualGames);
     document.querySelector("#adminAdvanceQual").addEventListener("click", autoGenerateQualRounds);
+    document.querySelector("#adminSEED1").addEventListener("click", generateSeed1);
 //    document.querySelector("#adminGenerateQualRounds").addEventListener("click", generateQualRounds);
 //    document.querySelector("#adminViewQualGames").addEventListener("click", generateQualGames);
 
-    let teamDoneBtns = document.querySelector(".TeamDoneButton").addEventListener("click", addTeamOrPlayer);
-    let playerDoneBtns = document.querySelector(".PlayerDoneButton").addEventListener("click", addTeamOrPlayer);
+//    let teamDoneBtns = document.querySelector(".TeamDoneButton").addEventListener("click", addTeamOrPlayer);
+//    let playerDoneBtns = document.querySelector(".PlayerDoneButton").addEventListener("click", addTeamOrPlayer);
+    document.querySelector(".TeamDoneButton").addEventListener("click", addTeamOrPlayer);
+    document.querySelector(".PlayerDoneButton").addEventListener("click", addTeamOrPlayer);
+    document.querySelector("#displayBracket").addEventListener("click", displayBracket);
+
+// Connor
+    for (let i = 0; i <= 10; i++) {
+        document.querySelector("#score" + i).addEventListener("click", addScore);
+    }
+
+    document.querySelector("#submitScores").addEventListener("click", returnScores);
+// Connor
+
 
     resetPage();
 };
@@ -49,6 +89,7 @@ function resetPage() {
     document.querySelector("#availGamesTable").classList.add("hidden");
     document.querySelector("#score").classList.add("hidden");
     document.querySelector("#matchups").classList.add("hidden");
+    document.querySelector("#tournamentBracket").classList.add("hidden");
 }
 
 function guestGetTeams() {
@@ -299,7 +340,6 @@ function buildPlayerTable(text) {
     let theTable = document.querySelector("#playerTable");
     let html = theTable.querySelector("tr").innerHTML;
 
-    // ******************** Need to stop adding these THs *************************
     if (user === "admin") {
         document.querySelector("#playerTable").deleteTHead();
         html = "<th>ID</th><th>Team ID</th><th>First Name</th><th>Last Name</th><th>Hometown</th><th>Province</th><th>Edit</th><th>Delete</th>";
@@ -390,38 +430,6 @@ function editPlayer(e) {
     document.querySelector(".PlayerDoneButton").addEventListener("click", updatePlayer);
     showAddUpdatePlayerPanel();
 
-
-    //////////////////////////
-
-//     let teamID = e.path[2].children[0].innerHTML;
-//    let teamName = e.path[2].children[1].innerHTML;
-//    console.log(teamID);
-//    console.log(teamName);
-//    // show edit panel
-//    showAddUpdateTeamPanel();
-//    document.querySelector(".panelTitle").innerHTML = "Edit Team";
-//
-//    //must contain a tag #updateTeamID  #updateTeamName
-//    //populate edit panel with team specific information
-//    //#updateTeamID #updateTeamName  
-//    document.querySelector("#addUpdateTeamID").value = teamID;
-//    document.querySelector("#addUpdateTeamName").value = teamName;
-//    //user edits teamID or teamName
-//    //add event listener to done button to go to updateTea,1
-//    let doneBtn = document.querySelector(".TeamDoneButton");
-//    doneBtn.removeEventListener("click", addTeamOrPlayer);
-//    doneBtn.addEventListener("click", function () {
-//        updateTeam(+teamID);
-//    });
-//
-//    // Takes user to top of page
-//    document.body.scrollTop = 0;
-//    document.documentElement.scrollTop = 0;
-
-    /////////////////////////
-
-
-
     addOrUpdatePlayer("update", e);
 }
 
@@ -509,9 +517,7 @@ function addOrUpdatePlayer(addOrUpdate, e) {
     let playerID, teamID, firstName, lastName, hometown, province;
     let url;
 
-
     if (addOrUpdate === "add") {
-
         playerID = document.querySelector("#playerIDInput").value;
         teamID = document.querySelector("#teamIDInput").value;
         firstName = document.querySelector("#firstNameInput").value;
@@ -563,37 +569,17 @@ function addOrUpdatePlayer(addOrUpdate, e) {
 
 
         url = "bowlingPlayerService/players/" + playerID;
-
     }
+}
 
-//    let obj = {
-//        playerID: playerID,
-//        teamID: teamID,
-//        firstName: firstName,
-//        lastName: lastName,
-//        hometown: hometown,
-//        province: province
-//    };
-//
-//    var method = (addOrUpdate === "add") ? "POST" : "PUT";
-//    console.log("JS: " + url);
-//    console.log("JS: " + method);
-//    var xmlhttp = new XMLHttpRequest();
-//    xmlhttp.onreadystatechange = function () {
-//        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-//            var resp = xmlhttp.responseText;
-//            if (resp.search("ERROR") >= 0 || resp != 1) {
-//                alert("Team NOT added");
-//                console.log(resp);
-//            } else {
-//                alert('Team added');
-//                resetButtons();
-//                adminGetTeams();
-//            }
-//        }
-//    };
-//    xmlhttp.open(method, url, true);
-//    xmlhttp.send(JSON.stringify(obj));
+// Doesn't work ??
+function resetFields() {
+    document.querySelector("#playerIDInput").innerHTML = "";
+    document.querySelector("#teamIDInput").innerHTML = "";
+    document.querySelector("#firstNameInput").innerHTML = "";
+    document.querySelector("#lastNameInput").innerHTML = "";
+    document.querySelector("#hometownInput").innerHTML = "";
+    document.querySelector("#provinceInput").innerHTML = "";
 }
 
 function addOrUpdateTeam(addOrUpdate) {
@@ -707,101 +693,6 @@ function generateRandomMatchups() {
     };
     xmlhttp.open("GET", url, true);
     xmlhttp.send();
-
-
-
-//
-//    //loop through the shuffled array 2 at a time
-//    for (let i = 0; i < shuffledArr.length; i += 2) {
-//        matchup = [shuffledArr[i], shuffledArr[i + 1]];
-//        returnArr.push(matchup);
-//    }
-////    public function __construct($matchID, $roundID, $matchGroup, $teamID, $score, $ranking) {
-////debugger;
-//    let matchID = 91;
-//    let roundID = "RAND";
-//    let roundCounter = 1;
-//    let matchGroup = 1;
-//
-//
-//
-//    for (let i = 0; i < returnArr.length; i++) {
-//        if (i !== 0 && i % 4 === 0) {
-//            roundCounter++;
-//        }
-//
-//        if (i !== 0 && i % 2 === 0) {
-//            matchGroup++;
-//        }
-//        let temp = returnArr[i];
-////        let temp2 = returnArr[1];
-//        for (let i = 0; i < temp.length; i++) {
-//            let team = temp[i];
-//
-//            let obj = {
-//                matchID: matchID,
-//                roundID: roundID + roundCounter,
-//                matchGroup: matchGroup,
-//                teamID: team.teamID,
-//                score: 0,
-//                ranking: 0
-//            };
-//
-//            var url = "bowlingMatchService/matches/" + obj.matchID;
-//            var method = "PUT";
-//            var xmlhttp = new XMLHttpRequest();
-//            xmlhttp.onreadystatechange = function () {
-//                matchID++;
-//
-//                if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-//                    var resp = xmlhttp.responseText;
-//
-//                    if (resp.search("ERROR") >= 0 || resp != 1) {
-//                        console.log("Match NOT added");
-//                        console.log(resp);
-//                    } else {
-//                        console.log('Match added');
-////                    resetButtons();
-////                    adminGetTeams();
-//                    }
-//                }
-//            };
-//            xmlhttp.open(method, url, true);
-//            xmlhttp.send(JSON.stringify(obj));
-//        }
-
-//        matchID++;
-//    }
-
-    //UPDATE THE DATABASE HERE
-    // matchID - int (91-120)
-    // roundID - string5 (RAND1-4)
-    // matchGroup - int (1-8)
-    // teamID -int
-    // score - int
-    // ranking - int
-    // insert into matchup, matchidOne, roundid, matchgroupOne, teamOneid
-    // insert into matchup, matchidTwo, roundid, matchgroupOne, teamTwoid
-
-//
-//    //
-//    insertMatchups(currTeam.teamID, "RAND1", 91, 1);
-//    insertMatchups(currTeam.teamName, "RAND1", 92, 1);
-//    
-//    
-//    
-//    
-//    
-//    
-//    for(i = 0; i<returnArr.length; i++){
-//        currTeam = returnArr[i];
-//        insertMatchups(currTeam.teamName, "RAND1", 91, 1);
-//    }
-//    
-//    
-
-    //return the array
-//    buildMatchupTable(returnArr); // Displays matchups
 
 // Reset the user
     user = "";
@@ -933,6 +824,7 @@ function guestViewStandings() {
             if (resp.search("ERROR") >= 0) {
                 alert("oh no...Check console");
             } else {
+                console.log(resp);
                 matchupsArr = resp;
                 displayMatchupsAndTeams();
             }
@@ -961,7 +853,6 @@ function getAllTeams() {
 
 function displayMatchupsAndTeams() {
     resetPage();
-
     document.querySelector("#matchups").classList.remove("hidden");
 
     let matchups = JSON.parse(matchupsArr);
@@ -969,6 +860,11 @@ function displayMatchupsAndTeams() {
 
     matchups = matchups.sort((a, b) => (a.score > b.score) ? -1 : 1);
     matchups.length = 16;
+
+//debugger;
+    // Storing top 16 teams in global array
+    topSixteen = matchups;
+//    console.log("TOP SIXTEEN: " + topSixteen);
 
     // The table
     let theTable = document.querySelector("#matchups");
@@ -998,36 +894,38 @@ function displayMatchupsAndTeams() {
     theTable.innerHTML = html;
     // End of table
 
-//    let output = [];
-//
-//    for (var i = 0; i < matchups.length; i++) {
-//        let matchup = matchups[i];
-//        let matchupTeam = matchup.teamID;
-//
-//        for (var j = 0; j < teams.length; j++) {
-//            let team = teams[j];
-//            let teamID = team.teamID;
-//
-//            if (matchupTeam === teamID) {
-//                let ranking = matchup.ranking;
-//                let teamName = team.teamName;
-//
-//                let rankingObject = {
-//                    ranking: ranking,
-//                    teamName: teamName,
-//                    teamID: teamID
-//                };
-//
-//                output.push(rankingObject);
-//            }
-//        }
-//    }
-//
-//    buildStandingsTable(output);
+    updateRankings(matchups);
 }
 
+function updateRankings(arr) {
+    for (let i = 0, length = arr.length; i < length; i++) {
+        let temp = arr[i];
+        let matchID = temp.matchID;
+        temp.ranking = (i + 1);
+
+        url = "BowlingMatchService/matches/" + matchID;
+
+        var method = "PUT";
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+                var resp = xmlhttp.responseText;
+                if (resp.search("ERROR") >= 0 || resp != 1) {
+//                    alert("Game NOT updated");
+                    console.log(resp);
+                } else {
+//                    alert('Game updated');
+                    console.log(resp);
+                }
+            }
+        };
+        xmlhttp.open(method, url, true);
+        xmlhttp.send(JSON.stringify(temp));
+    }
+}
 
 function buildStandingsTable(array) {
+    console.log("ARR: " + array);
     resetPage();
 
     array.sort((a, b) => (a.ranking > b.ranking) ? 1 : -1);
@@ -1160,7 +1058,11 @@ function displayAvailableGames(arr) {
         html += "<td>" + row.teamName + "</td>";
         html += "<td>" + row.playerName + "</td>";
         html += "<td>" + row.status + "</td>";
-        html += "<td><button class=scoreGame>Score Game</button></td>";
+        if (row.status === "COMPLETE") {
+            html += "<td><button class=scoreGame disabled>Score Game</button></td>";
+        } else {
+            html += "<td><button class=scoreGame>Score Game</button></td>";
+        }
         html += "</tr>";
     }
     html += "</div>";
@@ -1178,27 +1080,37 @@ function displayAvailableGames(arr) {
 }
 
 function displayScorer(e) {
+    // Change AVAILABLE to IN-PROGRESS    
+
 //    resetPage();
     document.querySelector("#score").classList.remove("hidden");
     let id = (e.target.parentElement.parentElement.cells[0].innerHTML);
+    let status = (e.target.parentElement.parentElement.cells[4].innerHTML);
+    e.target.parentElement.parentElement.cells[4].innerHTML = "IN-PROGRESS";
+// ************* Comment out to replace scoreboard
     let content = document.querySelector("#score");
     let html = "";
     html += "GameID: " + id;
     html += "<br><input id=scoreInput><br><button class=scoreSubmit>Submit</button>";
     content.innerHTML = html;
+// ************* Comment out to replace scoreboard
 
     // Eventlisteners for submit button
     let submitScoreBtn = document.querySelector(".scoreSubmit");
     submitScoreBtn.addEventListener("click", function () {
         scoreGame(id);
+        generateQualGames();
+
     });
 }
 
-function scoreGame(gameID, inScore) {
-
+function scoreGame(gameID, inScore, matchID) {
     let score = inScore;
     if (score === undefined) {
         score = document.querySelector("#scoreInput").value;
+    }
+    if (matchID === undefined) {
+        matchID = 1;
     }
 
     // ajax put
@@ -1208,9 +1120,9 @@ function scoreGame(gameID, inScore) {
     url = "BowlingGameService/games/" + gameID;
     let obj = {
         gameID: gameID,
-        matchID: 0,
+        matchID: matchID,
         gameNumber: 0,
-        gameStatusID: "",
+        gameStatusID: "COMPLETE",
         score: score,
         balls: ""
     };
@@ -1236,9 +1148,158 @@ function scoreGame(gameID, inScore) {
 }
 
 function autoGenerateQualRounds() {
+    let matchID = 1;
     for (let i = 1; i <= 480; i++) {
         let score = Math.floor(Math.random() * 300);
-        scoreGame(i, score);
+        scoreGame(i, score, matchID);
+    }
+
+    document.querySelector("#adminSEED1").disabled = false;
+}
+
+function generateSeed1() {
+    // topSixteen is global array
+    let length = topSixteen.length;
+    let j = length;
+    let matchupArr = [];
+    let teamArr = JSON.parse(globalTeams);
+
+
+    for (let i = 0; i < length / 2; i++) { // length/2
+        let teamOne = topSixteen[i];
+        let teamTwo = topSixteen[j - 1];
+
+        console.log("Round " + (i + 1) + " " + teamOne.teamID);
+        console.log("Round " + (i + 1) + " " + teamTwo.teamID);
+
+        for (let k = 0; k < teamArr.length; k++) {
+            if (teamOne.teamID === teamArr[k].teamID || teamTwo.teamID === teamArr[k].teamID) {
+                matchupArr.push(teamArr[k]);
+            }
+        }
+
+
+
+        j--;
+    }
+
+
+    createSeededMatchups(matchupArr);
+
+
+}
+
+
+function createSeededMatchups(seededArray) {
+    debugger;
+    populateFirstRound(seededArray);
+    
+    // $matchID, $roundID, $matchGroup, $teamID, $score, $ranking
+    let matchID = 61;
+    let roundID = "SEED1";
+
+    let matchGroup = 1;
+
+    let matchupObjArr = [];
+
+    //loop through seeded array
+    for (let i = 0, max = seededArray.length; i < max; i++) {
+        //generate a matchup object for each element of the array
+        let currTeam = seededArray[i];
+        if (i % 2 === 0 && i !== 0) {
+            matchGroup++;
+        }
+
+        let matchupObj = {
+            matchID: matchID,
+            roundID: roundID,
+            matchGroup: matchGroup,
+            teamID: currTeam.teamID,
+            score: 0,
+            ranking: 0
+        };
+        matchupObjArr.push(matchupObj);
+
+        matchID++;
+
+        ajaxMOA(matchupObj);
+    }
+
+//    console.log(matchupObjArr);
+}
+
+function ajaxMOA(obj) {
+    let matchID = obj.matchID;
+
+    url = "bowlingMatchService/matches/" + matchID;
+
+    var method = "PUT";
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+            var resp = xmlhttp.responseText;
+            if (resp.search("ERROR") >= 0 || resp != 1) {
+                console.log(resp);
+            } else {
+//                adminGetTeams();
+            }
+        }
+    };
+    xmlhttp.open(method, url, true);
+    xmlhttp.send(JSON.stringify(obj));
+}
+
+function displayBracket() {
+    resetPage();
+    document.querySelector("#tournamentBracket").classList.remove("hidden");
+    
+    populateFirstRound();
+}
+
+// Bracket JS
+function populateFirstRound(teams) {
+    let teamPos = 0;
+    let firstRound = document.querySelectorAll(".firstRound");
+    for (let i = 0; i < firstRound.length; i++) {
+        firstRound.item(i).firstElementChild.innerHTML = teams[teamPos++].teamName;
+        firstRound.item(i).lastElementChild.innerHTML = teams[teamPos++].teamName;
+        //firstMatch = firstRound[i].innerHTML = teams[i];
+
+    }
+}
+
+function populateSecondRound(teams) {
+    let teamPos = 0;
+    for (let i = 0; i < secondRound.length; i++) {
+        secondRound.item(i).firstElementChild.innerHTML = teams[teamPos++].teamName;
+        secondRound.item(i).lastElementChild.innerHTML = teams[teamPos++].teamName;
+
+    }
+}
+
+function populateThirdRound(teams) {
+    let teamPos = 0;
+    for (let i = 0; i < thirdRound.length; i++) {
+        thirdRound.item(i).firstElementChild.innerHTML = teams[teamPos++].teamName;
+        thirdRound.item(i).lastElementChild.innerHTML = teams[teamPos++].teamName;
+
+    }
+}
+
+function populateFourthRound(teams) {
+    let teamPos = 0;
+    for (let i = 0; i < fourthRound.length; i++) {
+        fourthRound.item(i).firstElementChild.innerHTML = teams[teamPos++].teamName;
+        fourthRound.item(i).lastElementChild.innerHTML = teams[teamPos++].teamName;
+
+    }
+}
+
+function populateFifthRound(teams) {
+    let teamPos = 0;
+    for (let i = 0; i < fifthRound.length; i++) {
+        fifthRound.item(i).firstElementChild.innerHTML = teams[teamPos++].teamName;
+
     }
 }
 
@@ -1269,175 +1330,135 @@ var shuffleMe = function (array) {
 
 };
 
-// STEVES SCORE GENERATOR ***********************************************************************************************************************
+// SCORE GENERATOR ***********************************************************************************************************************
 
-function scoreQualRandomly() {
-    let matchupArray = [];
-    for (let i = 0; i <= 60; i++) {
-
-        let currScore = generateRandomScore();
-        //matchID = i
-        //roundID = "QUAL"
-        //matchGroup =1
-        //teamID = i
-        //score = parseFrames(generateRandomScore())
-        let qualObj = {
-            matchID: i,
-            roundID: "QUAL", // "QUAL"
-            matchGroup: 1,
-            teamID: i,
-            score: parseFrames(currScore).reduce((a, b) => a + b, 0),
-            ranking: 0
-        };
-
-        matchupArray.push(qualObj);
-
-
+function returnScores() {
+    let newArr = [];
+    for (let i = 0; i < scoreArr.length; i++) {
+        newArr[i] = scoreArr[i][0];
     }
-
-    return matchupArray;
-
+    console.log(newArr);
+    console.log(sumFrame(parseFrames(newArr)));
+    return newArr;
 }
 
-function generateRandomScore() {
-    //generate 3 random numbers
-    let frames = 10;
-    let randStrikes = 0;
-    let randSpares = 0;
-    let randOpenFrames = 0;
-    randStrikes = getRandomInt(0, frames);
-    frames -= randStrikes;
-    if (frames > 0) {
-        randSpares = getRandomInt(0, frames);
-        frames -= randSpares;
-    }
+function addScore(e) {
+    //Selects the column for ball1
+    let score1 = document.querySelector("#matchTable").querySelectorAll("tr")[1].querySelectorAll("td")[frame];
+    //selects the column for ball2 
+    let score2 = document.querySelector("#matchTable").querySelectorAll("tr")[2].querySelectorAll("td")[frame];
 
-    randOpenFrames = frames;
-//    console.log(frames);
-//    console.log(randStrikes);
-//    console.log(randSpares);
-//    console.log(randOpenFrames);
+    let thisScore = parseInt(e.target.value);
 
-    let scoreArr = generateFrames(randStrikes, randSpares, randOpenFrames);
+    frameTotal += thisScore;
 
-    return scoreArr;
+    if (frame >= 9) {
+        if (ball === 0) {
+            scoreArr[frame] = [];
+        }
+        if (ball <= maxBalls) {
+            if (ball === 0) {
+                if (frameTotal === 10) {
+                    scoreArr[frame].push("X");
+                    score1.innerHTML = "X";
+                    maxBalls = 2;
+                    frameTotal = 0;
+                    frame++;
+                } else {
+                    scoreArr[frame].push(thisScore);
+                    score1.innerHTML = scoreArr[frame];
+                }
 
-}
-
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function generateFrames(strikes, spares, openFrames) {
-
-    if (strikes < 0 || spares < 0 || openFrames < 0 || (strikes + spares + openFrames) !== 10) {
-        return ["0 0", "0 0", "0 0", "0 0", "0 0", "0 0", "0 0", "0 0", "0 0", "0 0"];
-    }
-    let frames = [];
-    let ball1, ball2, bonus;
-    let i;
-
-    // generate the requested number of frames of each type
-    for (i = 0; i < strikes; i++) {
-        frames.push(STRIKE_CHAR);
-    }
-    for (i = 0; i < spares; i++) {
-        ball1 = generateRandomBetween(0, 9);
-        frames.push(ball1 + BALL_SEPARATOR_CHAR + SPARE_CHAR);
-    }
-    for (i = 0; i < openFrames; i++) {
-        ball1 = generateRandomBetween(0, 9);
-        ball2 = generateRandomBetween(0, 9 - ball1);
-        frames.push(ball1 + BALL_SEPARATOR_CHAR + ball2);
-    }
-
-    // shuffle the frames
-    shuffle(frames);
-
-    // generate one bonus ball if the tenth frame is a spare
-    if (frames[9].indexOf(SPARE_CHAR) !== -1) {
-        bonus = generateRandomBall();
-        frames.push(bonus);
-    }
-
-    // generate two bonus balls if the tenth frame is a strike
-    if (frames[9] === STRIKE_CHAR) {
-        ball1 = generateRandomBall();
-        if (ball1 === STRIKE_CHAR) {
-            bonus = ball1 + BALL_SEPARATOR_CHAR + generateRandomBall();
-        } else {
-            ball2 = generateRandomBetween(0, 10 - ball1); // might be a spare
-            if (ball1 + ball2 === 10) {
-                ball2 = SPARE_CHAR;
+            } else {
+                let thisFrame;
+                let lastFrame = document.querySelector("#matchTable").querySelectorAll("tr")[2].querySelectorAll("td")[9];
+                //This got a little wierd
+                if (scoreArr[frame - 1][0] === "X") {
+                    if (ball === 1) {
+                        //I do not know what I was thinking at this time, dont judge me
+                        //I do not remember doing this and it works so i dont want to change it
+                        thisFrame = scoreArr[frame] = [];
+                        if (thisScore === 10) {
+                            thisFrame.push("X");
+                            lastFrame.innerHTML = "X";
+                        } else {
+                            thisFrame.push(thisScore);
+                            lastFrame.innerHTML = thisScore;
+                        }
+                    } else {
+                        scoreArr[frame][0];
+                        //this is ugly but it was all bandaid fixes from lack of foresight
+                        if (thisScore === 10) {
+                            scoreArr[frame][0] += " " + "X";
+                            lastFrame.innerHTML += " " + "X";
+                        } else if (frameTotal === 10) {
+                            scoreArr[frame][0] += " " + "/";
+                            lastFrame.innerHTML += " " + "/";
+                        } else if (frameTotal != 10) {
+                            scoreArr[frame][0] += " " + thisScore;
+                            lastFrame.innerHTML += " " + thisScore;
+                        }
+                    }
+                } else {
+                    if (ball === maxBalls && maxBalls === 2) {
+                        thisFrame = scoreArr[frame + 1] = [];
+                        thisFrame.push(thisScore + " 0");
+                        lastFrame.innerHTML = thisScore + " 0";
+                    } else if (frameTotal != 10) {
+                        thisFrame += " " + thisScore;
+                        lastFrame.innerHTML += thisScore + " 0";
+                    } else if (frameTotal === 10) {
+                        maxBalls = 2;
+                        frameTotal = 0;
+                        if (thisScore != 10) {
+                            scoreArr[frame] += " " + "/";
+                            lastFrame.innerHTML += " " + "/";
+                        } else {
+                            scoreArr[frame] += " " + "X";
+                            lastFrame += " " + "X";
+                        }
+                    }
+                }
             }
-            bonus = ball1 + BALL_SEPARATOR_CHAR + ball2;
+            ball++;
         }
-        frames.push(bonus);
-    }
-
-//    console.log(frames);
-    return frames;
-}
-
-// generate a strike half the time 
-function generateRandomBall() {
-    let res = "";
-    if (Math.random() < 0.5) {
-        res = STRIKE_CHAR;
-    } else {
-        res = generateRandomBetween(0, 9);
-    }
-    return res;
-}
-
-function generateRandomBetween(min, max) {
-    return min + Math.floor(Math.random() * (max - min + 1));
-}
-
-// The Fisher-Yates Shuffle 
-function shuffle(frames) {
-    for (let i = frames.length - 1; i > 0; i -= 1) {
-        let j = Math.floor(Math.random() * (i + 1));
-        let temp = frames[i];
-        frames[i] = frames[j];
-        frames[j] = temp;
-    }
-}
-
-function getBalls(frames) {
-    let res = frames[0];
-
-    for (let i = 1; i < frames.length; i++) {
-        res += BALL_SEPARATOR_CHAR + frames[i];
-    }
-
-    return res;
-}
-
-function formatFramesAsTable(frames) {
-    let i;
-    let res = "<table>";
-    res += "<tr>";
-    for (let i = 0; i < frames.length; i++) {
-        if (i < 10) {
-            res += "<th>" + (i + 1) + "</th>";
+    } else if (ball === 0) {
+        scoreArr[frame] = [];
+        //console.log("FrameTotal: " + frameTotal);
+        //console.log("Score " + thisScore);
+        score1.innerHTML = thisScore;
+        if (frameTotal === 10) {
+            scoreArr[frame].push("X");
+            frame++;
+            frameTotal = 0;
+            score1.innerHTML = "X";
         } else {
-            res += "<th>Bonus</th>";
+            scoreArr[frame].push(thisScore);
+            ball++;
         }
+    } else if (ball === 1) {
+        if (frameTotal === 10) {
+            scoreArr[frame] += " /";
+            score2.innerHTML = "/";
+        } else {
+            scoreArr[frame] += " " + thisScore;
+            score2.innerHTML = thisScore;
+        }
+        ball = 0;
+        frameTotal = 0;
+        frame++;
     }
-    res += "</tr>";
+    console.log(scoreArr);
 
-    res += "<tr>";
-    for (i = 0; i < frames.length; i++) {
-        res += "<td>" + frames[i] + "</td>";
+
+    for (let i = 0; i < 11; i++) {
+        document.querySelector("#score" + i).disabled = false;
     }
-    res += "</tr>";
 
-    res += "</table>";
+    for (let i = (11 - frameTotal); i < 11; i++) {
+        document.querySelector("#score" + i).disabled = true;
+    }
 
-    return res;
 }
 
 function scoreChecker(firstThrow, secondThrow) {
@@ -1459,6 +1480,7 @@ function scoreChecker(firstThrow, secondThrow) {
     return parseInt(firstThrow) + parseInt(secondThrow);
 }
 
+
 function lookAheadTwoBalls(framesArr, index) {
 
     let nextBall = framesArr[index + 1].split(" ")[0];
@@ -1472,6 +1494,7 @@ function lookAheadTwoBalls(framesArr, index) {
     return scoreChecker(nextBall, finalBall);
 }
 
+
 function lookAheadOneBall(framesArr, index) {
     //    debugger;
     let temp = framesArr[index + 1];
@@ -1484,8 +1507,8 @@ function lookAheadOneBall(framesArr, index) {
 }
 
 function parseFrames(frames) {
-//    debugger;
-    let scoreArr = [];
+    //debugger;
+    let scores = [];
     //loop
     for (let i = 0; i < 10; i++) {
         //store frame score
@@ -1508,10 +1531,9 @@ function parseFrames(frames) {
         } else {
             frameScore += scoreChecker(firstThrowFirstFrame, secondThrowFirstFrame);
         }
-        scoreArr[i] = frameScore;
+        scores[i] = frameScore;
     }
-//    console.log(scoreArr);
-    return scoreArr.slice(0, 10);
+    return scores.slice(0, 10);
 }
 
 function sumFrame(frames) {
@@ -1521,12 +1543,11 @@ function sumFrame(frames) {
         let temp = frames[i];
         total += temp;
     }
-//    console.log(total);
     return total;
 }
 
 function cumulativeSum(frames) {
-//    debugger;
+    debugger;
     //    let total = 0;
     let arr = [];
     arr[0] = frames[0];
@@ -1537,5 +1558,5 @@ function cumulativeSum(frames) {
         arr[i] = arr[i - 1] + nextFrame;
     }
 
-//    console.log(arr);
+    console.log(arr);
 }

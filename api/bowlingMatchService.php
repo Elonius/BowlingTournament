@@ -24,7 +24,7 @@ if ($method === "GET") {
 function doGet() {
     if (!filter_has_var(INPUT_GET, 'matchID')) {
         try {
-            $ma = new GameAccessor();
+            $ma = new MatchAccessor();
             $results = $ma->getAllItems();
 //            ChromePhp::log($results);
             $results = json_encode($results, JSON_NUMERIC_CHECK);
@@ -45,10 +45,10 @@ function doDelete() {
         $matchID = filter_input(INPUT_GET, 'matchID');
 
         // create a match object - only ID matters
-        $matchObj = new Game($matchID, "dummy", 999, 999, 999, 999);
+        $matchObj = new Matchup($matchID, "dummy", 999, 999, 999, 999);
 
         // delete the object from DB
-        $ma = new GameAccessor();
+        $ma = new MatchAccessor();
 
         $success = $ma->deleteItem($matchObj);
 
@@ -63,10 +63,10 @@ function doPost() {
     $contents = json_decode($body, true);
 
     // create a match object
-    $matchObj = new Game($contents['matchID'], $contents['roundID'], $contents['matchGroup'], $contents['teamID'], $contents['score'], $contents['ranking']);
+    $matchObj = new Matchup($contents['matchID'], $contents['roundID'], $contents['matchGroup'], $contents['teamID'], $contents['score'], $contents['ranking']);
 
     // add the object to DB
-    $ma = new GameAccessor();
+    $ma = new MatchAccessor();
     $success = $ma->insertItem($matchObj); // *******
     echo $success;
 }
@@ -79,9 +79,9 @@ function doPut() {
 //    ChromePhp::log("IN PUT: ");
 //    ChromePhp::log(json_encode($contents));
     // create a match object
-    $matchObj = new Game($contents['matchID'], $contents['roundID'], $contents['matchGroup'], $contents['teamID'], $contents['score'], $contents['ranking']);
+    $matchObj = new Matchup($contents['matchID'], $contents['roundID'], $contents['matchGroup'], $contents['teamID'], $contents['score'], $contents['ranking']);
     // update the object in the  DB
-    $ma = new GameAccessor();
+    $ma = new MatchAccessor();
     $success = $ma->updateItem($matchObj); // *******
     echo $success;
 }

@@ -5,7 +5,7 @@ $projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/shawnmcc/BowlingT
 require_once 'ConnectionManager.php';
 require_once ($projectRoot . '/entity/Matchup.php');
 
-class GameAccessor {
+class MatchAccessor {
 
     private $getByIDStatementString = "select * from matchup where matchID = :matchID order by score";
     private $deleteStatementString = "delete from matchup where matchID = :matchID";
@@ -69,7 +69,7 @@ class GameAccessor {
                 $teamID = $r['teamID'];
                 $score = $r['score'];
                 $ranking = $r['ranking'];
-                $obj = new Game($matchID, $roundID, $matchgroup, $teamID, $score, $ranking);
+                $obj = new Matchup($matchID, $roundID, $matchgroup, $teamID, $score, $ranking);
                 array_push($result, $obj);
             }
         } catch (Exception $e) {
@@ -114,7 +114,7 @@ class GameAccessor {
                 $teamID = $r['teamID'];
                 $score = $r['score'];
                 $ranking = $r['ranking'];
-                $result = new Game($matchID, $roundID, $matchgroup, $teamID, $score, $ranking);
+                $result = new Matchup($matchID, $roundID, $matchgroup, $teamID, $score, $ranking);
             }
         } catch (Exception $e) {
             $result = NULL;
@@ -164,7 +164,7 @@ class GameAccessor {
         $teamID = $item->getTeamID();
         $score = $item->getScore();
         $ranking = $item->getRanking();
-        $obj = new Game($matchID, $roundID, $matchgroup, $teamID, $score, $ranking);
+        $obj = new Matchup($matchID, $roundID, $matchgroup, $teamID, $score, $ranking);
 
         try {
             $this->insertStatement->bindParam(":roundID", $roundID);
@@ -198,7 +198,7 @@ class GameAccessor {
         $teamID = $item->getTeamID();
         $score = $item->getScore();
         $ranking = $item->getRanking();
-        $obj = new Game($matchID, $roundID, $matchgroup, $teamID, $score, $ranking);
+        $obj = new Matchup($matchID, $roundID, $matchgroup, $teamID, $score, $ranking);
 
         try {
             $this->updateStatement->bindParam(":matchID", $matchID);
