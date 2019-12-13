@@ -2,11 +2,13 @@ let user = "";
 let addOrUpdate = "";
 let teamOrPlayer = "";
 let teamArray;
-let tick = 0;
 let matchupsArr;
 let topSixteen = [];
 let globalTeams;
 let globalPlayers;
+let globalQualTeams = null;
+//let global16;
+let globalGameID;
 
 
 // Bracket
@@ -19,22 +21,23 @@ let thirdRound = document.querySelectorAll(".thirdRound");
 //collection of fourth round matchups <li> tags
 let fourthRound = document.querySelectorAll(".fourthRound");
 //collection of fifth round matchups <li> tags
-let  fifthRound = document.querySelectorAll(".fifthRound");
+let fifthRound = document.querySelectorAll(".fifthRound");
 // Bracket
 
-
+// If broke - remove all 'let'
 //---- For scoreboard
-frame = 0;
-ball = 0;
-frameTotal = 0;
-totalScore = 0;
+let frame = 0;
+let ball = 0;
+let frameTotal = 0;
+let totalScore = 0;
 //one needed for string
-scoreArr = [];
+let scoreArr = [];
 //only total of each frame
-totalScores = [];
+let totalScores = [];
 //frames that have to be added to previous
-maxBalls = 1;
+let maxBalls = 1;
 //let frameTotal = 0, ball = 0, scoreArray = [], maxBalls = 1;
+let currBalls = "";
 
 const SPARE_CHAR = "/";
 const STRIKE_CHAR = "X";
@@ -43,6 +46,8 @@ const BALL_SEPARATOR_CHAR = " ";
 window.onload = function () {
     getAllTeams();
     loadPlayers();
+//    // Getting top 16 matches
+
 
     // add event handlers for buttons
     document.querySelector("#getTeams").addEventListener("click", guestGetTeams);
@@ -74,7 +79,8 @@ window.onload = function () {
     document.querySelector("#submitScores").addEventListener("click", returnScores);
 // Connor
 
-
+// Reset database - run script
+    document.querySelector("#resetDB").addEventListener("click", resetDatabase);
     resetPage();
 };
 
@@ -91,6 +97,26 @@ function resetPage() {
     document.querySelector("#score").classList.add("hidden");
     document.querySelector("#matchups").classList.add("hidden");
     document.querySelector("#tournamentBracket").classList.add("hidden");
+}
+
+function resetDatabase() {
+    url = "resetService/reset";
+    let obj = {};
+
+    var method = "POST";
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+            var resp = xmlhttp.responseText;
+            if (resp.search("ERROR") >= 0 || resp != 1) {
+                console.log(resp);
+            } else {
+                alert('Database Reset');
+            }
+        }
+    };
+    xmlhttp.open(method, url, true);
+    xmlhttp.send(JSON.stringify(obj));
 }
 
 function guestGetTeams() {
@@ -213,7 +239,7 @@ function buildAdminTeamTable(text, user) {
         if (row.earnings === null) {
             html += "<td>$0.00</td>";
         } else {
-            html += "<td>" + row.earnings + "</td>";
+            html += "<td><strong>$" + row.earnings + "</strong></td>";
         }
         html += "<td><button class=viewPlayers>View Players</button></td>";
         html += "<td><button class=editTeam>Edit Team</button></td>";
@@ -261,7 +287,7 @@ function buildGuestTeamTable(text) {
         if (row.earnings === null) {
             html += "<td>$0.00</td>";
         } else {
-            html += "<td>" + row.earnings + "</td>";
+            html += "<td><strong>$" + row.earnings + "</strong></td>";
         }
         html += "<td><button class=viewPlayers>View Players</button></td>";
 
@@ -344,7 +370,6 @@ function buildPlayerTable(text) {
     if (user === "admin") {
         document.querySelector("#playerTable").deleteTHead();
         html = "<th>ID</th><th>Team ID</th><th>First Name</th><th>Last Name</th><th>Hometown</th><th>Province</th><th>Edit</th><th>Delete</th>";
-//        tick++;
     } else if (user === "guest") {
         document.querySelector("#playerTable").deleteTHead();
         html = "<th>ID</th><th>Team ID</th><th>First Name</th><th>Last Name</th><th>Hometown</th><th>Province</th>";
@@ -374,10 +399,7 @@ function buildPlayerTable(text) {
     let deleteBtns = document.querySelectorAll(".deletePlayer");
     for (var i = 0; i < editBtns.length; i++) {
         editBtns[i].addEventListener("click", editPlayer);
-//        let tempEdit = editBtns[i];
-        let tempDelete = deleteBtns[i];
-//        tempEdit.addEventListener("click", editPlayer);
-        tempDelete.addEventListener("click", deletePlayer);
+        deleteBtns[i].addEventListener("click", deletePlayer);
     }
 
     // Resetting user variable
@@ -583,19 +605,19 @@ function resetFields() {
     document.querySelector("#provinceInput").innerHTML = "";
 }
 
-function addOrUpdateTeam(addOrUpdate) {
+function addOrUpdateTeam(addOrUpdate, payout) {
     let teamID;
     let teamName;
     let earnings;
-
+    debugger;
     if (addOrUpdate === "add") {
         teamID = document.querySelector("#addUpdateTeamID").value;
         teamName = document.querySelector("#addUpdateTeamName").value;
         earnings = null;
-    } else {
+    } else if (addOrUpdate === "update") {
         teamID = document.querySelector("#addUpdateTeamID").value;
         teamName = document.querySelector("#addUpdateTeamName").value;
-        earnings = null;
+        earnings = payout;
     }
 
     let obj = {
@@ -652,8 +674,9 @@ function showAddUpdateTeamPanel() {
 }
 
 function cancel() {
-    document.querySelector("#AddUpdateTeamPanel").classList.add("hidden")
-    document.querySelector("#AddUpdatePlayerPanel").classList.add("hidden")
+    document.querySelector("#AddUpdateTeamPanel").classList.add("hidden");
+    document.querySelector("#AddUpdatePlayerPanel").classList.add("hidden");
+    resetFields();
 }
 
 function showAddUpdatePlayerPanel() {
@@ -825,7 +848,6 @@ function guestViewStandings() {
             if (resp.search("ERROR") >= 0) {
                 alert("oh no...Check console");
             } else {
-                console.log(resp);
                 matchupsArr = resp;
                 displayMatchupsAndTeams();
             }
@@ -833,6 +855,67 @@ function guestViewStandings() {
     };
     xmlhttp.open("GET", url, true);
     xmlhttp.send();
+}
+
+function getTop16Matches() {
+    let url = "BowlingMatchService/matches";
+    let xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+            let resp = xmlhttp.responseText;
+            if (resp.search("ERROR") >= 0) {
+                alert("oh no...Check console");
+            } else {
+                let res = JSON.parse(resp);
+                res.sort((a, b) => (a.score > b.score) ? -1 : 1);
+                res.length = 16;
+
+                qualPayouts(res);
+            }
+        }
+    };
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+}
+// ******************************************************************************************************************************************
+function qualPayouts(arr) {
+    let teams = JSON.parse(globalTeams);
+    console.log(arr);
+    console.log(teams);
+
+    for (let i = 0, length = teams.length; i < length; i++) {
+        let team = teams[i];
+
+        for (var j = 0, lengthArr = arr.length; j < lengthArr; j++) {
+            let match = arr[j];
+
+            if (team.teamID === match.teamID) {
+                team.earnings = 400;
+                payTeam(team);
+            }
+        }
+    }
+}
+
+function payTeam(obj) {
+    console.log(obj);
+    url = "BowlingTeamService/team/" + obj.teamID;
+
+    var method = "PUT";
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+            var resp = xmlhttp.responseText;
+            if (resp.search("ERROR") >= 0 || resp != 1) {
+//                    alert("Game NOT updated");
+                console.log(resp);
+            } else {
+                console.log(resp);
+            }
+        }
+    };
+    xmlhttp.open(method, url, true);
+    xmlhttp.send(JSON.stringify(obj));
 }
 
 function getAllTeams() {
@@ -857,6 +940,8 @@ function displayMatchupsAndTeams() {
     document.querySelector("#matchups").classList.remove("hidden");
 
     let matchups = JSON.parse(matchupsArr);
+    console.log(matchupsArr);
+    console.log(matchups);
     let teams = JSON.parse(globalTeams);
 
     matchups = matchups.sort((a, b) => (a.score > b.score) ? -1 : 1);
@@ -878,9 +963,6 @@ function displayMatchupsAndTeams() {
 
         html += "<tr>";
         html += "<td>" + (i + 1) + "</td>";
-        html += "<td>" + row.matchID + "</td>";
-        html += "<td>" + row.roundID + "</td>";
-        html += "<td>" + row.matchgroup + "</td>";
 //        html += "<td>" + row.teamID + "</td>";
         for (var t = 0; t < teams.length; t++) {
             if (row.teamID === teams[t].teamID) {
@@ -915,8 +997,7 @@ function updateRankings(arr) {
 //                    alert("Game NOT updated");
                     console.log(resp);
                 } else {
-//                    alert('Game updated');
-                    console.log(resp);
+//                    console.log(resp);
                 }
             }
         };
@@ -1029,7 +1110,8 @@ function buildQualGames(games) {
             teamName: team.teamName,
             playerName: player.firstName + " " + player.lastName,
             playerID: player.playerID,
-            status: game.gameStatusID
+            status: game.gameStatusID,
+            score: game.score
         };
 
         result.push(obj);
@@ -1059,6 +1141,7 @@ function displayAvailableGames(arr) {
         html += "<td>" + row.teamName + "</td>";
         html += "<td>" + row.playerName + "</td>";
         html += "<td>" + row.status + "</td>";
+        html += "<td>" + row.score + "</td>";
         if (row.status === "COMPLETE") {
             html += "<td><button class=scoreGame disabled>Score Game</button></td>";
         } else {
@@ -1082,30 +1165,34 @@ function displayAvailableGames(arr) {
 
 function displayScorer(e) {
     // Change AVAILABLE to IN-PROGRESS    
-
+// Takes user to top of page
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
 //    resetPage();
     document.querySelector("#score").classList.remove("hidden");
-    let id = (e.target.parentElement.parentElement.cells[0].innerHTML);
+//    let id = (e.target.parentElement.parentElement.cells[0].innerHTML);
+    globalGameID = (e.target.parentElement.parentElement.cells[0].innerHTML);
     let status = (e.target.parentElement.parentElement.cells[4].innerHTML);
     e.target.parentElement.parentElement.cells[4].innerHTML = "IN-PROGRESS";
 // ************* Comment out to replace scoreboard
-    let content = document.querySelector("#score");
-    let html = "";
-    html += "GameID: " + id;
-    html += "<br><input id=scoreInput><br><button class=scoreSubmit>Submit</button>";
-    content.innerHTML = html;
+//    let content = document.querySelector("#score");
+//    let html = "";
+//    html += "GameID: " + id;
+//    html += "<br><input id=scoreInput><br><button class=scoreSubmit>Submit</button>";
+//    content.innerHTML = html;
 // ************* Comment out to replace scoreboard
 
     // Eventlisteners for submit button
     let submitScoreBtn = document.querySelector(".scoreSubmit");
     submitScoreBtn.addEventListener("click", function () {
-        scoreGame(id);
+        scoreGame(globalGameID);
         generateQualGames();
 
     });
 }
 
 function scoreGame(gameID, inScore, matchID) {
+    debugger;
     let score = inScore;
     if (score === undefined) {
         score = document.querySelector("#scoreInput").value;
@@ -1125,7 +1212,7 @@ function scoreGame(gameID, inScore, matchID) {
         gameNumber: 0,
         gameStatusID: "COMPLETE",
         score: score,
-        balls: ""
+        balls: currBalls
     };
 
     var method = "PUT";
@@ -1137,8 +1224,7 @@ function scoreGame(gameID, inScore, matchID) {
 //                    alert("Game NOT updated");
                 console.log(resp);
             } else {
-//                    alert('Game updated');
-                console.log(resp);
+//                console.log(resp);
             }
         }
     };
@@ -1150,14 +1236,16 @@ function scoreGame(gameID, inScore, matchID) {
 
 function autoGenerateQualRounds() {
     let matchID = 1;
+    currBalls = "";
     for (let i = 1; i <= 480; i++) {
         let score = Math.floor(Math.random() * 300);
         scoreGame(i, score, matchID);
     }
+    global16 = getTop16Matches();
 
     document.querySelector("#adminSEED1").disabled = false;
 
-    addOrUpdateTeam("update");
+    addOrUpdateTeam("update", 400);
 }
 
 function generateSeed1() {
@@ -1167,12 +1255,12 @@ function generateSeed1() {
     let matchupArr = [];
     let teamArr = JSON.parse(globalTeams);
 
-    for (let i = 0; i < length / 2; i++) { // length/2
+    for (let i = 0; i < length / 2; i++) {
         let teamOne = topSixteen[i];
         let teamTwo = topSixteen[j - 1];
 
-        console.log("Round " + (i + 1) + " " + teamOne.teamID);
-        console.log("Round " + (i + 1) + " " + teamTwo.teamID);
+//        console.log("Round " + (i + 1) + " " + teamOne.teamID);
+//        console.log("Round " + (i + 1) + " " + teamTwo.teamID);
 
         for (let k = 0; k < teamArr.length; k++) {
             if (teamOne.teamID === teamArr[k].teamID || teamTwo.teamID === teamArr[k].teamID) {
@@ -1182,7 +1270,7 @@ function generateSeed1() {
 
         j--;
     }
-
+    globalQualTeams = matchupArr;
     createSeededMatchups(matchupArr);
 
     document.querySelector("#adminSEED2").disabled = false;
@@ -1190,7 +1278,6 @@ function generateSeed1() {
 
 
 function createSeededMatchups(seededArray) {
-    console.log(seededArray);
     populateFirstRound(seededArray);
 
     // $matchID, $roundID, $matchGroup, $teamID, $score, $ranking
@@ -1252,7 +1339,26 @@ function displayBracket() {
     resetPage();
     document.querySelector("#tournamentBracket").classList.remove("hidden");
 
-//    populateFirstRound();
+    let arr = [{teamName: "Undecided"}, {teamName: "Undecided"}, {teamName: "Undecided"}, {teamName: "Undecided"}, {teamName: "Undecided"}, {teamName: "Undecided"}, {teamName: "Undecided"}, {teamName: "Undecided"}, {teamName: "Undecided"}, {teamName: "Undecided"}, {teamName: "Undecided"}, {teamName: "Undecided"}, {teamName: "Undecided"}, {teamName: "Undecided"}, {teamName: "Undecided"}, {teamName: "Undecided"}];
+
+//    if (globalQualTeams !== null) {
+//        populateFirstRound(globalQualTeams);
+//    } else {
+//        populateFirstRound(arr);
+//    }
+//        populateFirstRound(arr);
+
+    arr.length = 8;
+    populateSecondRound(arr);
+
+    arr.length = 4;
+    populateThirdRound(arr);
+
+    arr.length = 2;
+    populateFourthRound(arr);
+
+    arr.length = 1;
+    populateFifthRound(arr);
 }
 
 // Bracket JS
@@ -1262,22 +1368,21 @@ function populateFirstRound(teams) {
     for (let i = 0; i < firstRound.length; i++) {
         firstRound.item(i).firstElementChild.innerHTML = teams[teamPos++].teamName;
         firstRound.item(i).lastElementChild.innerHTML = teams[teamPos++].teamName;
-        //firstMatch = firstRound[i].innerHTML = teams[i];
-
     }
 }
 
 function populateSecondRound(teams) {
     let teamPos = 0;
+    let secondRound = document.querySelectorAll(".secondRound");
     for (let i = 0; i < secondRound.length; i++) {
         secondRound.item(i).firstElementChild.innerHTML = teams[teamPos++].teamName;
         secondRound.item(i).lastElementChild.innerHTML = teams[teamPos++].teamName;
-
     }
 }
 
 function populateThirdRound(teams) {
     let teamPos = 0;
+    let thirdRound = document.querySelectorAll(".thirdRound");
     for (let i = 0; i < thirdRound.length; i++) {
         thirdRound.item(i).firstElementChild.innerHTML = teams[teamPos++].teamName;
         thirdRound.item(i).lastElementChild.innerHTML = teams[teamPos++].teamName;
@@ -1287,6 +1392,8 @@ function populateThirdRound(teams) {
 
 function populateFourthRound(teams) {
     let teamPos = 0;
+    let fourthRound = document.querySelectorAll(".fourthRound");
+
     for (let i = 0; i < fourthRound.length; i++) {
         fourthRound.item(i).firstElementChild.innerHTML = teams[teamPos++].teamName;
         fourthRound.item(i).lastElementChild.innerHTML = teams[teamPos++].teamName;
@@ -1296,6 +1403,8 @@ function populateFourthRound(teams) {
 
 function populateFifthRound(teams) {
     let teamPos = 0;
+    let fifthRound = document.querySelectorAll(".fifthRound");
+
     for (let i = 0; i < fifthRound.length; i++) {
         fifthRound.item(i).firstElementChild.innerHTML = teams[teamPos++].teamName;
 
@@ -1344,14 +1453,119 @@ var shuffleMe = function (array) {
 
 // SCORE GENERATOR ***********************************************************************************************************************
 
+//Start Here
 function returnScores() {
-    let newArr = [];
-    for (let i = 0; i < scoreArr.length; i++) {
-        newArr[i] = scoreArr[i][0];
+    debugger;
+
+    generateQualGames();
+    // Takes user to top of page
+    document.body.scrollTop = 0;
+    document.documentElement.scrollTop = 0;
+
+    console.log("SCORE ARR");
+    console.log(scoreArr);
+    let score = sumFrame(parseFrames(scoreArr));
+
+//    let newArr = [];
+//    for (let i = 0; i <= scoreArr.length; i++) {
+//        newArr[i] = scoreArr[i][0];
+//    }
+//
+//    console.log("NEW ARR");
+//    console.log(newArr);
+//    console.log(newArr.toString());
+//    return newArr;
+    currBalls = scoreArr.toString();
+    scoreGame(globalGameID, score);
+
+}
+
+function submitScores() {
+    let tempScoreArray = parseFrames(scoreArr);
+    let tempTotalScore = 0;
+    for (let i = 0; i < tempScoreArray.length; i++) {
+        tempTotalScore += tempScoreArray[i];
     }
-    console.log(newArr);
-    console.log(sumFrame(parseFrames(newArr)));
-    return newArr;
+
+    console.log(tempTotalScore);
+
+    scoreArr = [];
+    maxBalls = 1;
+    frameTotal = 0;
+
+}
+
+function calcScores() {
+    let tempMinArray = createMinScoreArray();
+    let tempMaxArray = createMaxScoreArray();
+
+    //logs information
+    let tempMinTotalScore = 0;
+    let tempMaxTotalScore = 0
+    let tempMinScoreArray = parseFrames(tempMinArray);
+    let tempMaxScoreArray = parseFrames(tempMaxArray);
+
+    for (let i = 0; i < tempMinScoreArray.length; i++) {
+        tempMinTotalScore += tempMinScoreArray[i];
+        tempMaxTotalScore += tempMaxScoreArray[i];
+    }
+
+    //console.log(tempMinArray);
+    //console.log(tempMaxArray);
+
+    document.querySelector("#totalScore").innerHTML = tempMinTotalScore;
+    document.querySelector("#maxScore").innerHTML = tempMaxTotalScore;
+}
+
+function enableSubmit() {
+    for (let i = 0; i < 11; i++) {
+        document.querySelector("#score" + i).disabled = true;
+    }
+    document.querySelector("#submitScores").disabled = false;
+    calcScores();
+}
+
+//gets the score so far from an incomplete score array
+/*
+ fills empty indexes with 0, needs to be used to update Max Score
+ */
+function createMaxScoreArray() {
+    if (scoreArr.length < 10) {
+        let tempScoreArray = [];
+
+        for (let i = 0; i <= 10; i++) {
+            if (scoreArr[i] === undefined) {
+                if (i === 10) {
+                    tempScoreArray.push("X X");
+                } else {
+                    tempScoreArray.push("X");
+                }
+            } else {
+                tempScoreArray[i] = scoreArr[i];
+            }
+        }
+        //console.log(tempScoreArray);
+        return tempScoreArray;
+    } else {
+        return scoreArr;
+    }
+}
+
+function createMinScoreArray() {
+    if (scoreArr.length < 10) {
+        let tempScoreArray = [];
+        for (let i = 0; i < 10; i++) {
+            if (scoreArr[i] === undefined) {
+                tempScoreArray[i] = "0 0";
+            } else {
+                tempScoreArray[i] = scoreArr[i];
+            }
+        }
+        //console.log(tempScoreArray);
+        return tempScoreArray;
+    } else {
+        return scoreArr;
+    }
 }
 
 function addScore(e) {
@@ -1364,91 +1578,103 @@ function addScore(e) {
 
     frameTotal += thisScore;
 
+    //debugger;
     if (frame >= 9) {
         if (ball === 0) {
-            scoreArr[frame] = [];
+            scoreArr[frame] = "0";
         }
         if (ball <= maxBalls) {
             if (ball === 0) {
                 if (frameTotal === 10) {
-                    scoreArr[frame].push("X");
+                    scoreArr[frame] = "X";
                     score1.innerHTML = "X";
                     maxBalls = 2;
                     frameTotal = 0;
                     frame++;
                 } else {
-                    scoreArr[frame].push(thisScore);
-                    score1.innerHTML = scoreArr[frame];
+                    scoreArr[frame] = thisScore;
+                    score1.innerHTML = thisScore;
                 }
 
             } else {
+                //debugger;
                 let thisFrame;
                 let lastFrame = document.querySelector("#matchTable").querySelectorAll("tr")[2].querySelectorAll("td")[9];
                 //This got a little wierd
                 if (scoreArr[frame - 1][0] === "X") {
+                    debugger;
                     if (ball === 1) {
                         //I do not know what I was thinking at this time, dont judge me
                         //I do not remember doing this and it works so i dont want to change it
-                        thisFrame = scoreArr[frame] = [];
                         if (thisScore === 10) {
-                            thisFrame.push("X");
+                            scoreArr[frame] = "X";
                             lastFrame.innerHTML = "X";
+                            frameTotal = 0;
+                        } else if (thisFrame === 10) {
+                            scoreArr[frame] += " /";
+                            frameTotal = 0;
                         } else {
-                            thisFrame.push(thisScore);
+                            scoreArr[frame] = thisScore;
                             lastFrame.innerHTML = thisScore;
                         }
                     } else {
-                        scoreArr[frame][0];
-                        //this is ugly but it was all bandaid fixes from lack of foresight
+                        //this is ugly because it was all bandaid fixes from lack of foresight
                         if (thisScore === 10) {
-                            scoreArr[frame][0] += " " + "X";
-                            lastFrame.innerHTML += " " + "X";
+                            scoreArr[frame] += " X";
+                            lastFrame.innerHTML += " X";
+                            enableSubmit();
+                            //scoreArr[frame + 1] = "X";
+                            //lastFrame.innerHTML += " X";
+                            maxBalls = 2;
+                            frameTotal = 0;
                         } else if (frameTotal === 10) {
-                            scoreArr[frame][0] += " " + "/";
+                            scoreArr[frame] += " " + "/";
                             lastFrame.innerHTML += " " + "/";
+                            enableSubmit();
+                            //maxBalls = 2;
+                            //frameTotal = 0;
                         } else if (frameTotal != 10) {
-                            scoreArr[frame][0] += " " + thisScore;
+                            scoreArr[frame] += " " + thisScore;
                             lastFrame.innerHTML += " " + thisScore;
+                            enableSubmit();
                         }
                     }
                 } else {
                     if (ball === maxBalls && maxBalls === 2) {
-                        thisFrame = scoreArr[frame + 1] = [];
-                        thisFrame.push(thisScore + " 0");
+                        scoreArr[frame + 1] = thisScore + " 0";
                         lastFrame.innerHTML = thisScore + " 0";
+                        enableSubmit();
                     } else if (frameTotal != 10) {
-                        thisFrame += " " + thisScore;
-                        lastFrame.innerHTML += thisScore + " 0";
+                        scoreArr[frame] += " " + thisScore;
+                        lastFrame.innerHTML += " " + thisScore;
+                        enableSubmit();
                     } else if (frameTotal === 10) {
                         maxBalls = 2;
                         frameTotal = 0;
-                        if (thisScore != 10) {
-                            scoreArr[frame] += " " + "/";
-                            lastFrame.innerHTML += " " + "/";
-                        } else {
-                            scoreArr[frame] += " " + "X";
-                            lastFrame += " " + "X";
-                        }
+                        scoreArr[9] += " " + "/";
+                        document.querySelector("#matchTable").querySelectorAll("tr")[1].querySelectorAll("td")[9].innerHTML += " " + "/";
                     }
+
                 }
             }
             ball++;
         }
     } else if (ball === 0) {
-        scoreArr[frame] = [];
+        scoreArr[frame] = "0";
         //console.log("FrameTotal: " + frameTotal);
         //console.log("Score " + thisScore);
         score1.innerHTML = thisScore;
         if (frameTotal === 10) {
-            scoreArr[frame].push("X");
+            scoreArr[frame] = "X";
             frame++;
             frameTotal = 0;
             score1.innerHTML = "X";
         } else {
-            scoreArr[frame].push(thisScore);
+            scoreArr[frame] = thisScore;
             ball++;
         }
     } else if (ball === 1) {
+        //console.logconsole.log(frameTotal);
         if (frameTotal === 10) {
             scoreArr[frame] += " /";
             score2.innerHTML = "/";
@@ -1460,18 +1686,25 @@ function addScore(e) {
         frameTotal = 0;
         frame++;
     }
-    console.log(scoreArr);
 
 
-    for (let i = 0; i < 11; i++) {
-        document.querySelector("#score" + i).disabled = false;
+    if (scoreArr[frame] === undefined && (frame != 10 && scoreArr[frame - 1] !== "X")) {
+        console.log(scoreArr);
+        calcScores();
     }
+
+    if (document.querySelector("#submitScores").disabled) {
+        for (let i = 0; i < 11; i++) {
+            document.querySelector("#score" + i).disabled = false;
+        }
+    }
+
 
     for (let i = (11 - frameTotal); i < 11; i++) {
         document.querySelector("#score" + i).disabled = true;
     }
-
 }
+//ends here
 
 function scoreChecker(firstThrow, secondThrow) {
 
@@ -1487,7 +1720,7 @@ function scoreChecker(firstThrow, secondThrow) {
     }
     //if second throw doesn't exist
     if (secondThrow === undefined) {
-        return parseInt(firstThrow)
+        return parseInt(firstThrow);
     }
     return parseInt(firstThrow) + parseInt(secondThrow);
 }
@@ -1570,5 +1803,5 @@ function cumulativeSum(frames) {
         arr[i] = arr[i - 1] + nextFrame;
     }
 
-    console.log(arr);
+    return arr;
 }

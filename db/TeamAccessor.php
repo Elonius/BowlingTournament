@@ -1,20 +1,10 @@
 <?php
 
-// $projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/ja/bowlingTournament';
-// require_once 'ConnectionManager.php';
-// require_once ($projectRoot . '/entity/Team.php');
-
-
 $projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/shawnmcc/BowlingTournament1';
-//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/barrie/BowlingTournament';
-//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/jarrett/BowlingTournament';
-//$projectRoot = filter_input(INPUT_SERVER, "DOCUMENT_ROOT") . '/connor/BowlingTournament';
 
 require_once 'ConnectionManager.php';
 require_once ($projectRoot . '/entity/Team.php');
 require_once ($projectRoot . '/utils/ChromePhp.php');
-
-//require_once ($projectRoot . '/api/bownlingTeamService.php');
 
 class TeamAccessor {
 

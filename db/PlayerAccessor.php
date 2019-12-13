@@ -12,7 +12,6 @@ class PlayerAccessor {
     private $deleteStatementString = "delete from player where playerID = :playerID";
     private $insertStatementString = "insert into player values (:playerID, :teamID, :firstName, :lastName, :hometown, :province)";
     private $updateStatementString = "update player set playerID = :playerID, teamID = :teamID, firstName = :firstName, lastName = :lastName, hometown = :hometown, province = :province where playerID = :playerID";
-
     private $conn = NULL;
     private $getByIDStatement = NULL;
     private $deleteStatement = NULL;
@@ -74,7 +73,6 @@ class PlayerAccessor {
                 $obj = new Player($playerID, $teamID, $firstName, $lastName, $hometown, $province);
                 array_push($result, $obj);
             }
-
         } catch (Exception $e) {
             $result = [];
         } finally {
@@ -96,7 +94,6 @@ class PlayerAccessor {
         return $this->getItemsByQuery("select * from player");
     }
 
-
     public function getPlayersOnTeam($teamID) {
         return $this->getItemsByQuery("select * from player where teamID = $teamID");
     }
@@ -111,10 +108,6 @@ class PlayerAccessor {
         $result = NULL;
 
         try {
-
-           // $this->getByIDStatement->bindParam(":playerID", $playerID);
-
-//            $this->getByIDStatement->bindParam(":playerID", $playerID);
             $this->getByIDStatement->bindParam(":teamID", $id);
 
             $this->getByIDStatement->execute();
@@ -131,7 +124,6 @@ class PlayerAccessor {
                 $province = $r['province'];
                 $result = new Player($playerID, $teamID, $firstName, $lastName, $hometown, $province);
             }
-
         } catch (Exception $e) {
             $result = NULL;
         } finally {
@@ -157,7 +149,6 @@ class PlayerAccessor {
         try {
             $this->deleteStatement->bindParam(":playerID", $playerID);
             $success = $this->deleteStatement->execute();
-
         } catch (PDOException $e) {
             $success = false;
         } finally {
@@ -193,7 +184,6 @@ class PlayerAccessor {
             $this->insertStatement->bindParam(":hometown", $hometown);
             $this->insertStatement->bindParam(":province", $province);
             $success = $this->insertStatement->execute();
-
         } catch (PDOException $e) {
             $success = false;
         } finally {
@@ -213,7 +203,7 @@ class PlayerAccessor {
      */
     public function updateItem($item) {
         $success;
-        
+
         $playerID = $item->getPlayerID();
         $teamID = $item->getTeamID();
         $firstName = $item->getFirstName();
@@ -241,4 +231,5 @@ class PlayerAccessor {
     }
 
 }
+
 // end class PlayerAccessor

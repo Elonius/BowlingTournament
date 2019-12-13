@@ -229,9 +229,6 @@ class GameAccessor {
     }
 
     public function updateScore($item) {
-        ChromePhp::log($item);
-
-
         $success;
         $gameID = $item->getGameID();
         $matchID = $item->getMatchID();

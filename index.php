@@ -8,6 +8,7 @@
     </head>
     <body>
         <div id="container">
+            <button id="resetDB">Reset DB</button>
             <div id="roleButtons" class="flex-container">
                 <!-- Guest buttons -->
                 <div id="public" class="flex-item">
@@ -82,6 +83,74 @@
 
                 </div>
             </div>
+            
+            <div id="score">
+
+                <div id="scoreForm">
+                    <h2>Score a Game</h2>
+                    <div id="scoreButtons">
+                        <button id=score0 value="0">0</button>
+                        <button id=score1 value="1">1</button>
+                        <button id=score2 value="2">2</button>
+                        <button id=score3 value="3">3</button>
+                        <button id=score4 value="4">4</button>
+                        <button id=score5 value="5">5</button>
+                        <button id=score6 value="6">6</button>
+                        <button id=score7 value="7">7</button>
+                        <button id=score8 value="8">8</button>
+                        <button id=score9 value="9">9</button>
+                        <button id=score10 value="10">X</button>
+                        <button id="submitScores" disabled=true>Submit</button>
+                    </div>
+
+                    <table id="matchTable">
+                        <tr>
+                            <th>1</th>
+                            <th>2</th>
+                            <th>3</th>
+                            <th>4</th>
+                            <th>5</th>
+                            <th>6</th>
+                            <th>7</th>
+                            <th>8</th>
+                            <th>9</th>
+                            <th>10</th>
+                            <th class="cellInfo">Score</th>
+                            <th class="cellInfo">Max<br>Possible</th>
+                        </tr>
+
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td id="totalScore" rowspan="2"></td>
+                            <td id="maxScore" rowspan="2">300</td>
+                        </tr>
+
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+
+                    </table>
+                </div>
+
+            </div>
 
             <!-- Tables -->
             <button id="btnAddTeam">Add a Team</button>
@@ -142,9 +211,6 @@
                 <table id="matchups">
                     <tr>
                         <th>Ranking</th>
-                        <th>Match ID</th>
-                        <th>Round ID</th>
-                        <th>Match Group</th>
                         <th>Team Name</th>
                         <th>Score</th>
                     </tr>
@@ -160,74 +226,12 @@
                         <th>Player Name</th>
                         <th>Game Status</th>
                         <th>Score</th>
+                        <th></th>
                     </tr>
                 </table> 
             </div>
 
-            <div id="score">
-
-                <div id="scoreForm">
-                    <h2>Score a Game</h2>
-                    <div id="scoreButtons">
-                        <button id=score0 value="0">0</button>
-                        <button id=score1 value="1">1</button>
-                        <button id=score2 value="2">2</button>
-                        <button id=score3 value="3">3</button>
-                        <button id=score4 value="4">4</button>
-                        <button id=score5 value="5">5</button>
-                        <button id=score6 value="6">6</button>
-                        <button id=score7 value="7">7</button>
-                        <button id=score8 value="8">8</button>
-                        <button id=score9 value="9">9</button>
-                        <button id=score10 value="10">X</button>
-                        <button id="submitScores">Submit</button>
-                    </div>
-
-                    <table id="matchTable">
-                        <tr>
-                            <th>1</th>
-                            <th>2</th>
-                            <th>3</th>
-                            <th>4</th>
-                            <th>5</th>
-                            <th>6</th>
-                            <th>7</th>
-                            <th>8</th>
-                            <th>9</th>
-                            <th>10</th>
-                        </tr>
-
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-
-
-                    </table>
-                </div>
-
-            </div>
+            
 
             <div id="tournamentBracket">
                 <div class='flex-container' id='first'>

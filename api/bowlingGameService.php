@@ -23,7 +23,6 @@ function doGet() {
         try {
             $ga = new GameAccessor();
             $results = $ga->getAllItems();
-//            ChromePhp::log($results);
             $results = json_encode($results, JSON_NUMERIC_CHECK);
 
             echo $results;
@@ -73,15 +72,11 @@ function doPut() {
     // reading the HTTP request body
     $body = file_get_contents('php://input');
     $contents = json_decode($body, true);
-    ChromePhp::log($contents);
-//    ChromePhp::log("IN PUT: ");
-//    ChromePhp::log(json_encode($contents));
     // create a game object
-//    if ($contents['matchID'] === "0" && $contents['gameStatusID'] === "AVAILABLE") {
-        $gameObj = new Game($contents['gameID'], $contents['matchID'], $contents['gameNumber'], $contents['gameStatusID'], $contents['score'], $contents['balls']);
-        // update the object in the  DB
-        $ga = new GameAccessor();
-        $success = $ga->updateItem($gameObj); // *******
+    $gameObj = new Game($contents['gameID'], $contents['matchID'], $contents['gameNumber'], $contents['gameStatusID'], $contents['score'], $contents['balls']);
+    // update the object in the  DB
+    $ga = new GameAccessor();
+    $success = $ga->updateItem($gameObj); // *******
 //    } else {
 //        $gameObj = new Game($contents['gameID'], $contents['matchID'], $contents['gameNumber'], "COMPLETE", $contents['score'], $contents['balls']);
 //        // update the object in the  DB
